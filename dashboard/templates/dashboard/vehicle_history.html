@@ -1,0 +1,693 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ vehicle.registration_number }} - GPS History
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/style.css' %}"
+    >
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIINfQ3W9C7Q0cZl4rZ1r5Y6Q5Q4Q5Q5Q5="
+        crossorigin=""
+    >
+
+    <style>
+
+        .history-page {
+            padding: 30px;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .history-title h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .history-title p {
+            margin: 6px 0 0;
+            color: #6b7280;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .history-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 42px;
+            padding: 0 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-button {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .tracking-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .history-summary {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-label {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* GPS MAP */
+
+        .history-map-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .history-map-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .history-map-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .route-status {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        #history-map {
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .history-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .history-card-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .history-card-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .history-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 14px 18px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .history-table td {
+            padding: 14px 18px;
+            border-top: 1px solid #eef2f7;
+            color: #334155;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .history-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .speed-value {
+            font-weight: 700;
+        }
+
+        .no-history {
+            padding: 50px 20px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        @media (max-width: 800px) {
+
+            .history-page {
+                padding: 20px;
+            }
+
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 18px;
+            }
+
+            .history-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .history-actions {
+                width: 100%;
+            }
+
+            .history-button {
+                flex: 1;
+            }
+
+            #history-map {
+                height: 400px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="history-page">
+
+    <!-- HEADER -->
+
+    <div class="history-header">
+
+        <div class="history-title">
+
+            <h1>
+                GPS History
+            </h1>
+
+            <p>
+                {{ vehicle.registration_number }}
+                —
+                {{ vehicle.vehicle_type }}
+            </p>
+
+        </div>
+
+        <div class="history-actions">
+
+            <a
+                href="{% url 'vehicles' %}"
+                class="history-button back-button"
+            >
+                ← Vehicles
+            </a>
+
+            <a
+                href="{% url 'live_tracking' %}"
+                class="history-button tracking-button"
+            >
+                Live Tracking
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="history-summary">
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            GPS Records
+        </div>
+
+        <div class="summary-value">
+            {{ total_points }}
+        </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            Distance Travelled
+        </div>
+
+        <div class="summary-value">
+
+            {{ total_distance|floatformat:2 }}
+            km
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            Average Speed
+        </div>
+
+        <div class="summary-value">
+
+            {{ average_speed|floatformat:1 }}
+            km/h
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            Maximum Speed
+        </div>
+
+        <div class="summary-value">
+
+            {{ maximum_speed|floatformat:1 }}
+            km/h
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            Current Speed
+        </div>
+
+        <div class="summary-value">
+
+            {{ vehicle.speed }}
+            km/h
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-label">
+            Trip Duration
+        </div>
+
+        <div class="summary-value">
+
+            {% if trip_duration %}
+                {{ trip_duration }}
+            {% else %}
+                —
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- ROUTE MAP -->
+
+    <div class="history-map-card">
+
+        <div class="history-map-header">
+
+            <h2>
+                Historical Route
+            </h2>
+
+            <div class="route-status">
+                {{ history|length }} GPS points
+            </div>
+
+        </div>
+
+        <div id="history-map"></div>
+
+    </div>
+
+
+    <!-- HISTORY TABLE -->
+
+    <div class="history-card">
+
+        <div class="history-card-header">
+
+            <h2>
+                Position History
+            </h2>
+
+        </div>
+
+
+        {% if history %}
+
+            <div class="history-table-wrapper">
+
+                <table class="history-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Date & Time</th>
+
+                            <th>Latitude</th>
+
+                            <th>Longitude</th>
+
+                            <th>Speed</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for record in history %}
+
+                            <tr>
+
+                                <td>
+                                    {{ forloop.counter }}
+                                </td>
+
+                                <td>
+                                    {{ record.recorded_at|date:"d M Y, H:i:s" }}
+                                </td>
+
+                                <td>
+                                    {{ record.latitude }}
+                                </td>
+
+                                <td>
+                                    {{ record.longitude }}
+                                </td>
+
+                                <td class="speed-value">
+                                    {{ record.speed }} km/h
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="no-history">
+
+                <h3>
+                    No GPS history available
+                </h3>
+
+                <p>
+                    GPS records will appear here when
+                    the vehicle starts sending
+                    location updates.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- Leaflet JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="">
+</script>
+
+
+<script>
+
+    /*
+        GPS HISTORY DATA
+    */
+
+    const historyPoints = [
+
+        {% for record in history %}
+
+        {
+            latitude:
+                Number("{{ record.latitude }}"),
+
+            longitude:
+                Number("{{ record.longitude }}"),
+
+            speed:
+                Number("{{ record.speed }}"),
+
+            recordedAt:
+                "{{ record.recorded_at|date:'d M Y, H:i:s' }}"
+        },
+
+        {% endfor %}
+
+    ];
+
+
+    /*
+        CREATE MAP
+    */
+
+    const map = L.map(
+        'history-map'
+    );
+
+
+    /*
+        OPENSTREETMAP TILES
+    */
+
+    L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            maxZoom: 19,
+
+            attribution:
+                '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+
+    /*
+        DRAW ROUTE
+    */
+
+    if (historyPoints.length > 0) {
+
+        /*
+            Reverse the data because the
+            database gives newest first.
+
+            This makes the route travel from
+            oldest → newest.
+        */
+
+        const routePoints =
+            [...historyPoints].reverse();
+
+
+        /*
+            Convert GPS points to Leaflet
+            coordinates.
+        */
+
+        const coordinates =
+            routePoints.map(
+                function(point) {
+
+                    return [
+                        point.latitude,
+                        point.longitude
+                    ];
+
+                }
+            );
+
+
+        /*
+            Draw the route line.
+        */
+
+        const routeLine =
+            L.polyline(
+                coordinates,
+                {
+                    weight: 5,
+                    opacity: 0.85
+                }
+            ).addTo(map);
+
+
+        /*
+            Start marker
+        */
+
+        const startPoint =
+            routePoints[0];
+
+        const startMarker =
+            L.marker(
+                [
+                    startPoint.latitude,
+                    startPoint.longitude
+                ]
+            ).addTo(map);
+
+
+        startMarker.bindPopup(
+            '<strong>Trip Start</strong><br>' +
+            startPoint.recordedAt +
+            '<br>Speed: ' +
+            startPoint.speed +
+            ' km/h'
+        );
+
+
+        /*
+            Latest position marker
+        */
+
+        const latestPoint =
+            routePoints[
+                routePoints.length - 1
+            ];
+
+
+        const latestMarker =
+            L.marker(
+                [
+                    latestPoint.latitude,
+                    latestPoint.longitude
+                ]
+            ).addTo(map);
+
+
+        latestMarker.bindPopup(
+            '<strong>Latest Position</strong><br>' +
+            latestPoint.recordedAt +
+            '<br>Speed: ' +
+            latestPoint.speed +
+            ' km/h'
+        );
+
+
+        /*
+            Fit map to entire route.
+        */
+
+        map.fitBounds(
+            routeLine.getBounds(),
+            {
+                padding: [30, 30]
+            }
+        );
+
+    } else {
+
+        /*
+            Default map position when
+            there is no GPS history.
+        */
+
+        map.setView(
+            [-1.286389, 36.817223],
+            12
+        );
+
+    }
+
+</script>
+
+</body>
+
+</html>

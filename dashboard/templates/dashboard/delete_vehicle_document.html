@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Delete Vehicle Document</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Delete Vehicle Document</h1>
+
+                <p>
+                    Confirm that you want to delete this document.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="form-container">
+
+            <p>
+                <strong>Vehicle:</strong>
+                {{ document.vehicle.registration_number }}
+            </p>
+
+            <p>
+                <strong>Document Type:</strong>
+                {{ document.get_document_type_display }}
+            </p>
+
+            <p>
+                <strong>Document Number:</strong>
+                {{ document.document_number|default:"-" }}
+            </p>
+
+            <p>
+                <strong>Expiry Date:</strong>
+                {{ document.expiry_date|date:"d M Y"|default:"-" }}
+            </p>
+
+            <p>
+                Are you sure you want to delete this document?
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="delete-button">
+                    Delete Document
+                </button>
+
+                <a
+                    href="{% url 'vehicle_documents' %}"
+                    class="edit-button">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

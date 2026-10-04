@@ -1,0 +1,246 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Maintenance - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <h2>Fleet Dashboard</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'dashboard' %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'vehicles' %}">
+                Vehicles
+            </a>
+
+            <a href="{% url 'live_tracking' %}">
+                Live Tracking
+            </a>
+
+            <a href="{% url 'fleet_analytics' %}">
+                Fleet Analytics
+            </a>
+
+            <a href="{% url 'maintenance_records' %}"
+               class="active">
+                Maintenance
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Vehicle Maintenance</h1>
+
+                    <p>
+                        Manage vehicle servicing, repairs,
+                        inspections and maintenance records.
+                    </p>
+                </div>
+
+                <a href="{% url 'add_maintenance' %}"
+                   class="add-vehicle-button">
+                    + Add Maintenance
+                </a>
+
+            </div>
+
+            <div class="search-filter-container">
+
+    <form method="get" class="search-filter-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search vehicle, description or provider"
+            class="search-input"
+        >
+
+        <select name="status" class="search-select">
+
+            <option value="">All Statuses</option>
+
+            <option value="scheduled"
+                {% if selected_status == 'scheduled' %}selected{% endif %}>
+                Scheduled
+            </option>
+
+            <option value="in_progress"
+                {% if selected_status == 'in_progress' %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="completed"
+                {% if selected_status == 'completed' %}selected{% endif %}>
+                Completed
+            </option>
+
+            <option value="cancelled"
+                {% if selected_status == 'cancelled' %}selected{% endif %}>
+                Cancelled
+            </option>
+
+        </select>
+
+        <button
+            type="submit"
+            class="edit-button">
+            Search
+        </button>
+
+        <a
+            href="{% url 'maintenance_records' %}"
+            class="delete-button">
+            Clear
+        </a>
+
+    </form>
+
+</div>
+
+
+            <div class="dashboard-card">
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Vehicle</th>
+
+                                <th>Maintenance Type</th>
+
+                                <th>Description</th>
+
+                                <th>Service Date</th>
+
+                                <th>Next Service</th>
+
+                                <th>Mileage</th>
+
+                                <th>Cost</th>
+
+                                <th>Service Provider</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for record in records %}
+
+                            <tr>
+
+                                <td>
+                                    {{ record.vehicle.registration_number }}
+                                </td>
+
+                                <td>
+                                    {{ record.get_maintenance_type_display }}
+                                </td>
+
+                                <td>
+                                    {{ record.description|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ record.service_date }}
+                                </td>
+
+                                <td>
+                                    {{ record.next_service_date|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {% if record.mileage %}
+                                        {{ record.mileage }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ record.cost }}
+                                </td>
+
+                                <td>
+                                    {{ record.service_provider|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ record.get_status_display }}
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="9"
+                                    style="text-align:center; padding:30px;">
+
+                                    No maintenance records found.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

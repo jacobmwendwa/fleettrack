@@ -1,0 +1,200 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Vehicle - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/">
+                🏠 Dashboard
+            </a>
+
+            <a href="{% url 'vehicles' %}" class="active">
+                🚚 Vehicles
+            </a>
+
+            <a href="{% url 'live_tracking' %}">
+    📍 Live Tracking
+</a>
+
+            <a href="#">
+                ⚠️ Alerts
+            </a>
+
+            <a href="#">
+                👥 Customers
+            </a>
+
+            <a href="#">
+                🎧 Support
+            </a>
+
+            <a href="#">
+                📊 Reports
+            </a>
+
+            <a href="#">
+                ⚙️ Settings
+            </a>
+
+            <a href="/accounts/logout/">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Fleet Dashboard</h1>
+
+                <p>
+                    Vehicle tracking and fleet management system
+                </p>
+
+            </div>
+
+            <div class="user-profile">
+
+                <div class="user-avatar">
+                    J
+                </div>
+
+                <div>
+                    <strong>Jacob</strong>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>Edit Vehicle</h2>
+
+                    <p>
+                        Update information for
+                        {{ vehicle.registration_number }}.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card vehicle-form-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>Vehicle Information</h3>
+
+                        <p>
+                            Make the required changes below.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="form-error">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    {% endif %}
+
+
+                    {% for field in form %}
+
+                        <div class="form-group">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+
+                                <div class="field-error">
+                                    {{ field.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <div class="form-actions">
+
+                        <a href="{% url 'vehicle_detail' vehicle.id %}"
+                           class="cancel-button">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="save-vehicle-button">
+                            💾 Update Vehicle
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

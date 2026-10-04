@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Fleet Settings</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Fleet Settings</h1>
+
+                <p>
+                    Manage basic fleet system settings.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-container">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="save-button">
+                        Save Settings
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>Current Configuration</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Setting</th>
+                            <th>Value</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Fleet Name</td>
+                            <td>
+                                {{ settings.fleet_name }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Currency</td>
+                            <td>
+                                {{ settings.currency }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Default Speed Limit</td>
+                            <td>
+                                {{ settings.default_speed_limit }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Contact Phone</td>
+                            <td>
+                                {{ settings.contact_phone|default:"Not provided" }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Contact Email</td>
+                            <td>
+                                {{ settings.contact_email|default:"Not provided" }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Address</td>
+                            <td>
+                                {{ settings.address|default:"Not provided" }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

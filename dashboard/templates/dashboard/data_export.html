@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Data Export</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Data Export</h1>
+
+                <p>
+                    Download fleet information as CSV files.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Data</th>
+                        <th>Description</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Vehicles</td>
+
+                        <td>
+                            Vehicle registration,
+                            type, driver, status and location.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_vehicles' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>Drivers</td>
+
+                        <td>
+                            Driver names, phone numbers,
+                            licences and assigned vehicles.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_drivers' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>Fuel Records</td>
+
+                        <td>
+                            Fuel dates, litres, costs,
+                            mileage and fuel stations.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_fuel' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>Maintenance Records</td>
+
+                        <td>
+                            Maintenance type, dates,
+                            mileage, costs and status.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_maintenance' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>Trips</td>
+
+                        <td>
+                            Vehicle trips, drivers,
+                            locations, distance and status.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_trips' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>Expenses</td>
+
+                        <td>
+                            Expense types, dates,
+                            amounts and descriptions.
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a href="{% url 'export_expenses' %}"
+                               class="edit-button">
+                                Download CSV
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

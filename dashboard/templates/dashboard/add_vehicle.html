@@ -1,0 +1,296 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Vehicle - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/" >
+                🏠 Dashboard
+            </a>
+
+            <a href="/vehicles/" class="active">
+                🚚 Vehicles
+            </a>
+
+            <a href="#">
+                📍 Live Tracking
+            </a>
+
+            <a href="#">
+                ⚠️ Alerts
+            </a>
+
+            <a href="#">
+                👥 Customers
+            </a>
+
+            <a href="#">
+                🎧 Support
+            </a>
+
+            <a href="#">
+                📊 Reports
+            </a>
+
+            <a href="#">
+                ⚙️ Settings
+            </a>
+
+            <a href="/accounts/logout/">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+                <h1>Fleet Dashboard</h1>
+
+                <p>
+                    Vehicle tracking and fleet management system
+                </p>
+            </div>
+
+            <div class="user-profile">
+
+                <div class="user-avatar">
+                    J
+                </div>
+
+                <div>
+                    <strong>Jacob</strong>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <section class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+                    <h2>Add Vehicle</h2>
+
+                    <p>
+                        Register a new vehicle into your fleet.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- FORM CARD -->
+
+            <div class="dashboard-card vehicle-form-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Vehicle Information</h3>
+
+                        <p>
+                            Enter the details of the vehicle below.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="form-error">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- REGISTRATION -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.registration_number.id_for_label }}">
+                            Registration Number
+                        </label>
+
+                        {{ form.registration_number }}
+
+                        {% if form.registration_number.errors %}
+                            <div class="field-error">
+                                {{ form.registration_number.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- VEHICLE TYPE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.vehicle_type.id_for_label }}">
+                            Vehicle Type
+                        </label>
+
+                        {{ form.vehicle_type }}
+
+                        {% if form.vehicle_type.errors %}
+                            <div class="field-error">
+                                {{ form.vehicle_type.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DRIVER -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.driver.id_for_label }}">
+                            Driver
+                        </label>
+
+                        {{ form.driver }}
+
+                        {% if form.driver.errors %}
+                            <div class="field-error">
+                                {{ form.driver.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.status.id_for_label }}">
+                            Status
+                        </label>
+
+                        {{ form.status }}
+
+                        {% if form.status.errors %}
+                            <div class="field-error">
+                                {{ form.status.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- SPEED -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.speed.id_for_label }}">
+                            Current Speed (km/h)
+                        </label>
+
+                        {{ form.speed }}
+
+                        {% if form.speed.errors %}
+                            <div class="field-error">
+                                {{ form.speed.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- LOCATION -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.location.id_for_label }}">
+                            Current Location
+                        </label>
+
+                        {{ form.location }}
+
+                        {% if form.location.errors %}
+                            <div class="field-error">
+                                {{ form.location.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="form-actions">
+
+                        <a href="/vehicles/"
+                           class="cancel-button">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="save-vehicle-button">
+                            💾 Save Vehicle
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

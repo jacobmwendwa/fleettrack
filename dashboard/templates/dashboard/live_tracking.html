@@ -1,0 +1,2193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Live Tracking - Fleet Dashboard</title>
+
+<link rel="stylesheet"
+      href="{% static 'accounts/style.css' %}">
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<style>
+
+/* ==========================================
+   MAP CONTAINER
+   ========================================== */
+
+.fleet-map-container {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
+
+
+/* ==========================================
+   VEHICLE INFORMATION PANEL
+   ========================================== */
+
+.vehicle-info-panel {
+
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 10;
+
+    width: 350px;
+
+    max-height: calc(100% - 40px);
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.18);
+
+    padding: 22px;
+
+    box-sizing: border-box;
+
+    display: none;
+
+    pointer-events: auto;
+}
+
+
+.vehicle-info-panel.visible {
+    display: block;
+}
+
+
+/* ==========================================
+   PANEL HEADER
+   ========================================== */
+
+.vehicle-info-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+
+.vehicle-info-label {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+
+.vehicle-info-header h3 {
+
+    margin: 0;
+
+    color: #172554;
+
+    font-size: 19px;
+}
+
+
+/* ==========================================
+   VEHICLE TITLE
+   ========================================== */
+
+.vehicle-title-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.vehicle-type-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #eff6ff;
+
+    font-size: 21px;
+}
+
+
+.vehicle-type-text {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+/* ==========================================
+   CLOSE BUTTON
+   ========================================== */
+
+.close-vehicle-panel {
+
+    width: 30px;
+
+    height: 30px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 22px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.close-vehicle-panel:hover {
+
+    background: #e2e8f0;
+
+    color: #334155;
+}
+
+
+/* ==========================================
+   STATUS ROW
+   ========================================== */
+
+.vehicle-info-status-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 16px 0;
+}
+
+
+.vehicle-status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.tracking-online {
+
+    color: #16a34a;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.tracking-offline {
+
+    color: #dc2626;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.tracking-maintenance {
+
+    color: #d97706;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   SPEED CARD
+   ========================================== */
+
+.vehicle-speed-card {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+
+    padding: 16px;
+
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+}
+
+
+.vehicle-speed-label {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #64748b;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+
+#info-speed-large {
+
+    color: #172554;
+
+    font-size: 28px;
+
+    line-height: 1;
+}
+
+
+.vehicle-speed-unit {
+
+    margin-left: 4px;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+.speed-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    font-size: 18px;
+}
+
+
+/* ==========================================
+   INFORMATION SECTIONS
+   ========================================== */
+
+.vehicle-info-section {
+
+    margin-top: 18px;
+}
+
+
+.vehicle-info-section-title {
+
+    margin-bottom: 9px;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+
+.vehicle-info-grid {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 0;
+
+    border-top: 1px solid #eef2f7;
+
+    border-left: 1px solid #eef2f7;
+}
+
+
+.vehicle-info-item {
+
+    min-height: 78px;
+
+    padding: 14px;
+
+    border-right: 1px solid #eef2f7;
+
+    border-bottom: 1px solid #eef2f7;
+
+    box-sizing: border-box;
+}
+
+
+.vehicle-info-item-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+.vehicle-info-item strong {
+
+    display: block;
+
+    color: #172554;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* ==========================================
+   GPS POSITION
+   ========================================== */
+
+.gps-position-card {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+}
+
+
+.gps-position-card > div {
+
+    padding: 11px;
+
+    border-radius: 7px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+}
+
+
+.gps-position-card span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 10px;
+}
+
+
+.gps-position-card strong {
+
+    color: #172554;
+
+    font-size: 12px;
+}
+
+
+/* ==========================================
+   LIVE INDICATOR
+   ========================================== */
+
+.vehicle-live-indicator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+    padding: 9px 11px;
+
+    border-radius: 7px;
+
+    background: #f0fdf4;
+
+    color: #15803d;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+.live-pulse-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #16a34a;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(22, 163, 74, 0.12);
+
+    animation:
+        vehiclePulse 1.8s infinite;
+}
+
+
+@keyframes vehiclePulse {
+
+    0% {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        opacity: 0.45;
+
+        transform: scale(1.25);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* ==========================================
+   CENTER BUTTON
+   ========================================== */
+
+.center-vehicle-button {
+
+    width: 100%;
+
+    height: 42px;
+
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.center-vehicle-button:hover {
+
+    background: #1d4ed8;
+}
+
+
+/* ==========================================
+   VEHICLE MAP MARKERS
+   ========================================== */
+
+.vehicle-map-marker {
+
+    cursor: pointer !important;
+
+    pointer-events: auto !important;
+
+    z-index: 10 !important;
+}
+
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    .vehicle-info-panel {
+
+        width: calc(100% - 30px);
+
+        left: 15px;
+
+        right: 15px;
+
+        top: 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+<!-- ==========================================
+     SIDEBAR
+     ========================================== -->
+
+<!-- ==========================================
+     SIDEBAR
+     ========================================== -->
+
+<!-- ==========================================
+     SIDEBAR
+     ========================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+        🚚 FleetTrack
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <a href="{% url 'dashboard' %}">
+            🏠 Dashboard
+        </a>
+
+        <a href="{% url 'vehicles' %}">
+            🚚 Vehicles
+        </a>
+
+        <a href="{% url 'live_tracking' %}" class="active">
+            📍 Live Tracking
+        </a>
+
+        <a href="{% url 'alerts' %}">
+            ⚠️ Alerts
+        </a>
+
+        <a href="{% url 'drivers' %}">
+            👥 Drivers
+        </a>
+
+        <a href="{% url 'maintenance_records' %}">
+            🔧 Maintenance
+        </a>
+
+        <a href="{% url 'fuel_records' %}">
+            ⛽ Fuel Management
+        </a>
+
+        <a href="{% url 'trips' %}">
+            🚗 Trips
+        </a>
+
+        <a href="{% url 'expenses' %}">
+            💰 Expenses
+        </a>
+
+        <a href="{% url 'fuel_efficiency' %}">
+            📈 Fuel Efficiency
+        </a>
+
+        <a href="{% url 'reports' %}">
+            📊 Reports
+        </a>
+
+        <a href="{% url 'fleet_settings' %}">
+            ⚙️ Settings
+        </a>
+
+        <a href="{% url 'user_management' %}">
+            👤 User Management
+        </a>
+
+        <a href="{% url 'data_export' %}">
+            📥 Data Export
+        </a>
+
+        <a href="/accounts/logout/">
+            🚪 Logout
+        </a>
+
+    </nav>
+
+</aside>
+
+
+<!-- ==========================================
+     MAIN CONTENT
+     ========================================== -->
+
+<main class="main-content">
+
+
+<header class="topbar">
+
+    <div>
+
+        <h1>
+            Fleet Dashboard
+        </h1>
+
+        <p>
+            Vehicle tracking and fleet management system
+        </p>
+
+    </div>
+
+
+    <div class="user-profile">
+
+        <div class="user-avatar">
+            J
+        </div>
+
+        <div>
+            <strong>Jacob</strong>
+        </div>
+
+    </div>
+
+</header>
+
+
+<section class="dashboard-content">
+
+
+<!-- ==========================================
+     PAGE HEADER
+     ========================================== -->
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Live Vehicle Tracking
+        </h2>
+
+        <p>
+            Monitor the current location and status
+            of your fleet.
+        </p>
+
+    </div>
+
+
+    <div class="tracking-status">
+
+        <span class="tracking-status-dot"></span>
+
+        Live Monitoring • Updates every 10 seconds
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     FILTERS
+     ========================================== -->
+
+<div class="tracking-controls">
+
+
+    <div class="tracking-control-group">
+
+        <label for="vehicle-filter">
+            Vehicle
+        </label>
+
+        <select id="vehicle-filter">
+
+            <option value="all">
+                All Vehicles
+            </option>
+
+            {% for vehicle in vehicles %}
+
+            <option value="{{ vehicle.id }}">
+                {{ vehicle.registration_number }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="tracking-control-group">
+
+        <label for="status-filter">
+            Status
+        </label>
+
+        <select id="status-filter">
+
+            <option value="all">
+                All Statuses
+            </option>
+
+            <option value="online">
+                🟢 Online
+            </option>
+
+            <option value="offline">
+                🔴 Offline
+            </option>
+
+            <option value="maintenance">
+                🟡 Maintenance
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="show-all-vehicles"
+        class="tracking-reset-button">
+
+        ↻ Show All
+
+    </button>
+
+</div>
+
+
+<!-- ==========================================
+     MAP
+     ========================================== -->
+
+<div class="dashboard-card live-map-card">
+
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>
+                Fleet Map
+            </h3>
+
+            <p id="last-map-update">
+                Last map update: waiting...
+            </p>
+
+            <p>
+                Click a vehicle marker to view details
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="fleet-map-container">
+
+
+        <div id="fleet-map"></div>
+
+
+        <!-- ==================================
+             SINGLE VEHICLE INFORMATION PANEL
+             ================================== -->
+
+        <div
+            id="vehicle-info-panel"
+            class="vehicle-info-panel">
+
+
+            <div class="vehicle-info-header">
+
+
+                <div>
+
+                    <span class="vehicle-info-label">
+                        SELECTED VEHICLE
+                    </span>
+
+
+                    <div class="vehicle-title-row">
+
+
+                        <div class="vehicle-type-icon">
+                            🚚
+                        </div>
+
+
+                        <div>
+
+                            <h3 id="info-registration">
+                                No Vehicle Selected
+                            </h3>
+
+
+                            <span
+                                id="info-vehicle-type"
+                                class="vehicle-type-text">
+
+                                Vehicle
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="close-vehicle-panel"
+                    class="close-vehicle-panel">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="vehicle-info-status-row">
+
+                <span
+                    id="info-tracking-status"
+                    class="tracking-online">
+
+                    ● Online
+
+                </span>
+
+
+                <span
+                    id="info-vehicle-status"
+                    class="vehicle-status-badge">
+
+                    Active
+
+                </span>
+
+            </div>
+
+
+            <!-- SPEED -->
+
+            <div class="vehicle-speed-card">
+
+                <div>
+
+                    <span class="vehicle-speed-label">
+                        CURRENT SPEED
+                    </span>
+
+
+                    <strong id="info-speed-large">
+                        0
+                    </strong>
+
+
+                    <span class="vehicle-speed-unit">
+                        km/h
+                    </span>
+
+                </div>
+
+
+                <div class="speed-icon">
+                    ⚡
+                </div>
+
+            </div>
+
+
+            <!-- VEHICLE INFORMATION -->
+
+            <div class="vehicle-info-section">
+
+                <div class="vehicle-info-section-title">
+                    VEHICLE INFORMATION
+                </div>
+
+
+                <div class="vehicle-info-grid">
+
+
+                    <div class="vehicle-info-item">
+
+                        <span class="vehicle-info-item-label">
+                            Driver
+                        </span>
+
+                        <strong id="info-driver">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="vehicle-info-item">
+
+                        <span class="vehicle-info-item-label">
+                            Vehicle Type
+                        </span>
+
+                        <strong id="info-vehicle-type-detail">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="vehicle-info-item">
+
+                        <span class="vehicle-info-item-label">
+                            Location
+                        </span>
+
+                        <strong id="info-location">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="vehicle-info-item">
+
+                        <span class="vehicle-info-item-label">
+                            GPS Last Seen
+                        </span>
+
+                        <strong id="info-last-seen">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GPS POSITION -->
+
+            <div class="vehicle-info-section">
+
+                <div class="vehicle-info-section-title">
+                    GPS POSITION
+                </div>
+
+
+                <div class="gps-position-card">
+
+
+                    <div>
+
+                        <span>
+                            Latitude
+                        </span>
+
+                        <strong id="info-latitude">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Longitude
+                        </span>
+
+                        <strong id="info-longitude">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LIVE INDICATOR -->
+
+            <div class="vehicle-live-indicator">
+
+                <span class="live-pulse-dot"></span>
+
+                <span>
+                    Live GPS monitoring active
+                </span>
+
+            </div>
+
+
+            <!-- CENTER -->
+
+            <button
+                type="button"
+                id="center-selected-vehicle"
+                class="center-vehicle-button">
+
+                📍 Center on Vehicle
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     SUMMARY
+     ========================================== -->
+
+<div class="dashboard-grid">
+
+
+    <div class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Vehicles on Map
+                </h3>
+
+                <p>
+                    Vehicles with GPS coordinates
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="big-number">
+            {{ vehicles|length }}
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Tracking Status
+                </h3>
+
+                <p>
+                    GPS monitoring system
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <span class="status-dot online"></span>
+
+            <strong>
+                Tracking operational
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     VEHICLE TABLE
+     ========================================== -->
+
+<div class="dashboard-card">
+
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>
+                Live Vehicle Status
+            </h3>
+
+            <p>
+                Current fleet monitoring information
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="vehicle-table-container">
+
+
+        <table class="vehicle-table">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Vehicle
+                    </th>
+
+                    <th>
+                        Driver
+                    </th>
+
+                    <th>
+                        Tracking Status
+                    </th>
+
+                    <th>
+                        Speed
+                    </th>
+
+                    <th>
+                        Location
+                    </th>
+
+                    <th>
+                        GPS Last Seen
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for vehicle in vehicles %}
+
+            <tr>
+
+                <td>
+
+                    <strong>
+                        {{ vehicle.registration_number }}
+                    </strong>
+
+                </td>
+
+
+                <td>
+                    {{ vehicle.driver|default:"Not Assigned" }}
+                </td>
+
+
+                <td>
+
+                    {% if vehicle.tracking_status == 'online' %}
+
+                    <span class="tracking-online">
+                        ● Online
+                    </span>
+
+                    {% elif vehicle.tracking_status == 'offline' %}
+
+                    <span class="tracking-offline">
+                        ● Offline
+                    </span>
+
+                    {% else %}
+
+                    <span class="tracking-maintenance">
+                        ● Maintenance
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+                    {{ vehicle.speed }} km/h
+                </td>
+
+
+                <td>
+                    {{ vehicle.location|default:"Unknown" }}
+                </td>
+
+
+                <td>
+
+                    {% if vehicle.gps_last_seen %}
+
+                        {{ vehicle.gps_last_seen|date:"d M Y, H:i:s" }}
+
+                    {% else %}
+
+                        <span style="color:#94a3b8;">
+                            Not yet received
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty-vehicles">
+
+                    No vehicles with GPS
+                    coordinates found.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</section>
+
+</main>
+
+</div>
+
+
+<!-- ==========================================
+     LEAFLET
+     ========================================== -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+/* ==========================================
+   MAP
+   ========================================== */
+
+const map = L.map('fleet-map').setView(
+    [-1.286389, 36.817223],
+    7
+);
+
+
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        maxZoom: 19,
+
+        attribution:
+            '&copy; OpenStreetMap contributors'
+    }
+).addTo(map);
+
+
+/* ==========================================
+   VEHICLE DATA
+   ========================================== */
+
+const vehicles = [
+
+{% for vehicle in vehicles %}
+
+{
+    id: {{ vehicle.id }},
+
+    registration:
+        "{{ vehicle.registration_number|escapejs }}",
+
+    vehicleType:
+        "{{ vehicle.vehicle_type|escapejs }}",
+
+    driver:
+        "{{ vehicle.driver|default:'Not Assigned'|escapejs }}",
+
+    status:
+        "{{ vehicle.status|escapejs }}",
+
+    trackingStatus:
+        "{{ vehicle.tracking_status|default:'offline'|escapejs }}",
+
+    speed:
+        Number("{{ vehicle.speed }}"),
+
+    location:
+        "{{ vehicle.location|default:'Unknown'|escapejs }}",
+
+    latitude:
+        Number("{{ vehicle.latitude }}"),
+
+    longitude:
+        Number("{{ vehicle.longitude }}"),
+
+    gpsLastSeen:
+        "{{ vehicle.gps_last_seen|date:'Y-m-d H:i:s' }}"
+
+},
+
+{% endfor %}
+
+];
+
+
+/* ==========================================
+   MARKER STORAGE
+   ========================================== */
+
+const vehicleMarkers = {};
+
+
+/* ==========================================
+   SELECTED VEHICLE
+   ========================================== */
+
+let selectedVehicleId = null;
+
+
+/* ==========================================
+   MARKER COLOR
+   ========================================== */
+
+function getMarkerColor(status) {
+
+    if (status === 'active') {
+        return '#16a34a';
+    }
+
+    if (status === 'offline') {
+        return '#dc2626';
+    }
+
+    if (status === 'maintenance') {
+        return '#d97706';
+    }
+
+    return '#2563eb';
+}
+
+
+/* ==========================================
+   CREATE VEHICLE ICON
+   ========================================== */
+
+function createVehicleIcon(vehicle) {
+
+    const markerColor =
+        getMarkerColor(vehicle.status);
+
+    return L.divIcon({
+
+        className: 'vehicle-map-marker',
+
+        html: `
+            <div
+                style="
+                    background:${markerColor};
+                    width:18px;
+                    height:18px;
+                    border-radius:50%;
+                    border:3px solid white;
+                    box-shadow:
+                        0 2px 6px
+                        rgba(0,0,0,0.3);
+                    cursor:pointer;
+                    pointer-events:auto;
+                ">
+            </div>
+        `,
+
+        iconSize: [24, 24],
+
+        iconAnchor: [12, 12]
+
+    });
+}
+
+
+/* ==========================================
+   SHOW VEHICLE PANEL
+   ========================================== */
+
+function showVehicleInfo(vehicle) {
+
+    selectedVehicleId = vehicle.id;
+
+
+    document.getElementById(
+        'info-registration'
+    ).textContent =
+        vehicle.registration || 'Unknown';
+
+
+    document.getElementById(
+        'info-vehicle-type'
+    ).textContent =
+        vehicle.vehicleType || 'Vehicle';
+
+
+    document.getElementById(
+        'info-vehicle-type-detail'
+    ).textContent =
+        vehicle.vehicleType || '—';
+
+
+    document.getElementById(
+        'info-driver'
+    ).textContent =
+        vehicle.driver || 'Not Assigned';
+
+
+    document.getElementById(
+        'info-speed-large'
+    ).textContent =
+        Number(vehicle.speed || 0).toFixed(0);
+
+
+    document.getElementById(
+        'info-location'
+    ).textContent =
+        vehicle.location || 'Unknown';
+
+
+    document.getElementById(
+        'info-latitude'
+    ).textContent =
+        Number(vehicle.latitude).toFixed(6);
+
+
+    document.getElementById(
+        'info-longitude'
+    ).textContent =
+        Number(vehicle.longitude).toFixed(6);
+
+
+    document.getElementById(
+        'info-last-seen'
+    ).textContent =
+        vehicle.gpsLastSeen ||
+        'Not yet received';
+
+
+    document.getElementById(
+        'info-vehicle-status'
+    ).textContent =
+        vehicle.status || 'Unknown';
+
+
+    const trackingStatus =
+        document.getElementById(
+            'info-tracking-status'
+        );
+
+
+    if (vehicle.trackingStatus === 'online') {
+
+        trackingStatus.textContent =
+            '● Online';
+
+        trackingStatus.className =
+            'tracking-online';
+
+    }
+
+    else if (
+        vehicle.trackingStatus === 'maintenance'
+    ) {
+
+        trackingStatus.textContent =
+            '● Maintenance';
+
+        trackingStatus.className =
+            'tracking-maintenance';
+
+    }
+
+    else {
+
+        trackingStatus.textContent =
+            '● Offline';
+
+        trackingStatus.className =
+            'tracking-offline';
+
+    }
+
+
+    document.getElementById(
+        'vehicle-info-panel'
+    ).classList.add('visible');
+
+
+    /* Center map on clicked vehicle */
+
+    map.setView(
+        [
+            vehicle.latitude,
+            vehicle.longitude
+        ],
+        14,
+        {
+            animate: true
+        }
+    );
+}
+
+
+/* ==========================================
+   CREATE MARKER
+   ========================================== */
+
+function createVehicleMarker(vehicle) {
+
+    const marker = L.marker(
+
+        [
+            vehicle.latitude,
+            vehicle.longitude
+        ],
+
+        {
+            icon:
+                createVehicleIcon(vehicle),
+
+            keyboard: true,
+
+            title:
+                vehicle.registration
+        }
+
+    ).addTo(map);
+
+
+    /* ======================================
+       IMPORTANT CLICK EVENT
+       ====================================== */
+
+    marker.on(
+        'click',
+        function(event) {
+
+            L.DomEvent.stopPropagation(event);
+
+            showVehicleInfo(vehicle);
+
+        }
+    );
+
+
+    vehicleMarkers[vehicle.id] =
+        marker;
+}
+
+
+/* ==========================================
+   CREATE ALL VEHICLE MARKERS
+   ========================================== */
+
+vehicles.forEach(
+    function(vehicle) {
+
+        createVehicleMarker(vehicle);
+
+    }
+);
+
+
+/* ==========================================
+   FILTER VEHICLES
+   ========================================== */
+
+function filterVehicles() {
+
+    const selectedVehicle =
+        document.getElementById(
+            'vehicle-filter'
+        ).value;
+
+
+    const selectedStatus =
+        document.getElementById(
+            'status-filter'
+        ).value;
+
+
+    let visibleVehicles = [];
+
+
+    vehicles.forEach(
+        function(vehicle) {
+
+            let showVehicle = true;
+
+
+            /* Vehicle filter */
+
+            if (
+                selectedVehicle !== 'all' &&
+                vehicle.id.toString()
+                    !== selectedVehicle
+            ) {
+
+                showVehicle = false;
+
+            }
+
+
+            /* Status filter */
+
+            if (
+                selectedStatus !== 'all'
+            ) {
+
+                if (
+                    selectedStatus === 'online' &&
+                    vehicle.trackingStatus
+                        !== 'online'
+                ) {
+
+                    showVehicle = false;
+
+                }
+
+
+                if (
+                    selectedStatus === 'offline' &&
+                    vehicle.trackingStatus
+                        !== 'offline'
+                ) {
+
+                    showVehicle = false;
+
+                }
+
+
+                if (
+                    selectedStatus === 'maintenance' &&
+                    vehicle.status
+                        !== 'maintenance'
+                ) {
+
+                    showVehicle = false;
+
+                }
+
+            }
+
+
+            const marker =
+                vehicleMarkers[vehicle.id];
+
+
+            if (!marker) {
+                return;
+            }
+
+
+            if (showVehicle) {
+
+                if (!map.hasLayer(marker)) {
+
+                    marker.addTo(map);
+
+                }
+
+                visibleVehicles.push(vehicle);
+
+            }
+
+            else {
+
+                if (map.hasLayer(marker)) {
+
+                    map.removeLayer(marker);
+
+                }
+
+            }
+
+        }
+    );
+
+
+    if (visibleVehicles.length > 0) {
+
+        const bounds =
+            L.latLngBounds(
+
+                visibleVehicles.map(
+                    function(vehicle) {
+
+                        return [
+                            vehicle.latitude,
+                            vehicle.longitude
+                        ];
+
+                    }
+                )
+
+            );
+
+
+        map.fitBounds(
+            bounds,
+            {
+                padding: [40, 40]
+            }
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   VEHICLE FILTER
+   ========================================== */
+
+document.getElementById(
+    'vehicle-filter'
+).addEventListener(
+    'change',
+    filterVehicles
+);
+
+
+/* ==========================================
+   STATUS FILTER
+   ========================================== */
+
+document.getElementById(
+    'status-filter'
+).addEventListener(
+    'change',
+    filterVehicles
+);
+
+
+/* ==========================================
+   SHOW ALL
+   ========================================== */
+
+document.getElementById(
+    'show-all-vehicles'
+).addEventListener(
+    'click',
+    function() {
+
+        document.getElementById(
+            'vehicle-filter'
+        ).value = 'all';
+
+
+        document.getElementById(
+            'status-filter'
+        ).value = 'all';
+
+
+        filterVehicles();
+
+    }
+);
+
+
+/* ==========================================
+   CLOSE PANEL
+   ========================================== */
+
+document.getElementById(
+    'close-vehicle-panel'
+).addEventListener(
+    'click',
+    function() {
+
+        document.getElementById(
+            'vehicle-info-panel'
+        ).classList.remove('visible');
+
+
+        selectedVehicleId = null;
+
+    }
+);
+
+
+/* ==========================================
+   CENTER SELECTED VEHICLE
+   ========================================== */
+
+document.getElementById(
+    'center-selected-vehicle'
+).addEventListener(
+    'click',
+    function() {
+
+        if (
+            selectedVehicleId === null
+        ) {
+
+            return;
+
+        }
+
+
+        const marker =
+            vehicleMarkers[
+                selectedVehicleId
+            ];
+
+
+        if (marker) {
+
+            map.setView(
+                marker.getLatLng(),
+                15,
+                {
+                    animate: true
+                }
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   LIVE GPS UPDATE
+   ========================================== */
+
+async function updateVehicleMarkers() {
+
+    try {
+
+        const response =
+            await fetch(
+                "{% url 'vehicle_locations_api' %}"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                'Unable to retrieve vehicle locations.'
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            return;
+
+        }
+
+
+        data.vehicles.forEach(
+            function(vehicle) {
+
+
+                const existingVehicle =
+                    vehicles.find(
+                        function(item) {
+
+                            return item.id === vehicle.id;
+
+                        }
+                    );
+
+
+                if (!existingVehicle) {
+
+                    return;
+
+                }
+
+
+                /* Update local vehicle */
+
+                existingVehicle.latitude =
+                    vehicle.latitude;
+
+                existingVehicle.longitude =
+                    vehicle.longitude;
+
+                existingVehicle.speed =
+                    vehicle.speed;
+
+                existingVehicle.location =
+                    vehicle.location;
+
+                existingVehicle.status =
+                    vehicle.status;
+
+                existingVehicle.trackingStatus =
+                    vehicle.tracking_status;
+
+                existingVehicle.gpsLastSeen =
+                    vehicle.gps_last_seen;
+
+
+                /* Get marker */
+
+                const marker =
+                    vehicleMarkers[
+                        vehicle.id
+                    ];
+
+
+                if (!marker) {
+
+                    return;
+
+                }
+
+
+                /* Move marker */
+
+                marker.setLatLng([
+
+                    vehicle.latitude,
+
+                    vehicle.longitude
+
+                ]);
+
+
+                /* Update marker appearance */
+
+                marker.setIcon(
+                    createVehicleIcon(
+                        existingVehicle
+                    )
+                );
+
+
+                /* Update selected panel */
+
+                if (
+                    selectedVehicleId === vehicle.id
+                ) {
+
+                    showVehicleInfo(
+                        existingVehicle
+                    );
+
+                }
+
+            }
+        );
+
+
+        const updateTime =
+            document.getElementById(
+                'last-map-update'
+            );
+
+
+        if (updateTime) {
+
+            const now =
+                new Date();
+
+
+            updateTime.textContent =
+                'Last map update: ' +
+                now.toLocaleTimeString();
+
+        }
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            'Vehicle tracking error:',
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   START LIVE UPDATES
+   ========================================== */
+
+setInterval(
+    updateVehicleMarkers,
+    10000
+);
+
+
+/* ==========================================
+   INITIAL FILTER
+   ========================================== */
+
+filterVehicles();
+
+
+/* ==========================================
+   MAP CLICK
+   ========================================== */
+
+map.on(
+    'click',
+    function() {
+
+        document.getElementById(
+            'vehicle-info-panel'
+        ).classList.remove('visible');
+
+        selectedVehicleId = null;
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

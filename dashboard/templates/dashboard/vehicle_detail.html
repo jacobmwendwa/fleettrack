@@ -1,0 +1,302 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ vehicle.registration_number }} - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/">
+                🏠 Dashboard
+            </a>
+
+            <a href="{% url 'vehicles' %}" class="active">
+                🚚 Vehicles
+            </a>
+
+            <a href="{% url 'live_tracking' %}">
+    📍 Live Tracking
+</a>
+
+            <a href="#">
+                ⚠️ Alerts
+            </a>
+
+            <a href="#">
+                👥 Customers
+            </a>
+
+            <a href="#">
+                🎧 Support
+            </a>
+
+            <a href="#">
+                📊 Reports
+            </a>
+
+            <a href="#">
+                ⚙️ Settings
+            </a>
+
+            <a href="/accounts/logout/">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Fleet Dashboard</h1>
+
+                <p>
+                    Vehicle tracking and fleet management system
+                </p>
+
+            </div>
+
+            <div class="user-profile">
+
+                <div class="user-avatar">
+                    J
+                </div>
+
+                <div>
+                    <strong>Jacob</strong>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>
+                        {{ vehicle.registration_number }}
+                    </h2>
+
+                    <p>
+                        Vehicle details and current information
+                    </p>
+
+                </div>
+
+                <div class="detail-header-actions">
+ 
+                    <a href="{% url 'edit_vehicle' vehicle.id %}"
+                       class="edit-main-button">
+                        ✏️ Edit Vehicle
+                    </a>
+
+                    <a
+    href="{% url 'vehicle_history' vehicle.id %}"
+    class="history-button"
+>
+    GPS History
+</a>
+
+                    <a href="{% url 'vehicles' %}"
+                       class="cancel-button">
+                        ← Back to Vehicles
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card vehicle-detail-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>Vehicle Information</h3>
+
+                        <p>
+                            Current information for this vehicle.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="vehicle-details-grid">
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Registration Number
+                        </span>
+
+                        <strong>
+                            {{ vehicle.registration_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Vehicle Type
+                        </span>
+
+                        <strong>
+                            {{ vehicle.vehicle_type }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Driver
+                        </span>
+
+                        <strong>
+
+                            {% if vehicle.driver %}
+                                {{ vehicle.driver }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Status
+                        </span>
+
+                        <strong>
+
+                            {% if vehicle.status == 'active' %}
+
+                                <span class="vehicle-status active-status">
+                                    🟢 Active
+                                </span>
+
+                            {% elif vehicle.status == 'offline' %}
+
+                                <span class="vehicle-status offline-status">
+                                    🔴 Offline
+                                </span>
+
+                            {% elif vehicle.status == 'maintenance' %}
+
+                                <span class="vehicle-status maintenance-status">
+                                    🟡 Maintenance
+                                </span>
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Current Speed
+                        </span>
+
+                        <strong>
+                            {{ vehicle.speed }} km/h
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Current Location
+                        </span>
+
+                        <strong>
+                            {{ vehicle.location|default:"Unknown" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Last Update
+                        </span>
+
+                        <strong>
+                            {{ vehicle.last_update|date:"d M Y, H:i" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            Vehicle Added
+                        </span>
+
+                        <strong>
+                            {{ vehicle.created_at|date:"d M Y, H:i" }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

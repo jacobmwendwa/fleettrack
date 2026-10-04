@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Add Expense</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Add Expense</h1>
+
+                <p>
+                    Add a new vehicle expense.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="form-container">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="add-vehicle-button">
+                    Save Expense
+                </button>
+
+                <a
+                    href="{% url 'expenses' %}"
+                    class="edit-button">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

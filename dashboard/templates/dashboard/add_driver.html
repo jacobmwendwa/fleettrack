@@ -1,0 +1,102 @@
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Driver</title>
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+
+        <h2>Fleet System</h2>
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'vehicles' %}">Vehicles</a>
+        <a href="{% url 'drivers' %}" class="active">Drivers</a>
+        <a href="{% url 'live_tracking' %}">Live Tracking</a>
+        <a href="{% url 'fleet_analytics' %}">Fleet Analytics</a>
+        <a href="{% url 'maintenance_records' %}">Maintenance</a>
+        <a href="{% url 'fuel_records' %}">Fuel</a>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>Add Driver</h1>
+                    <p>Enter the driver's details below.</p>
+                </div>
+            </div>
+
+            <div class="form-card">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="driver-form-grid">
+
+                        <div class="form-group">
+                            <label for="{{ form.name.id_for_label }}">
+                                Driver Name
+                            </label>
+                            {{ form.name }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.phone.id_for_label }}">
+                                Phone Number
+                            </label>
+                            {{ form.phone }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.license_number.id_for_label }}">
+                                License Number
+                            </label>
+                            {{ form.license_number }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.vehicle.id_for_label }}">
+                                Assigned Vehicle
+                            </label>
+                            {{ form.vehicle }}
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button type="submit" class="add-vehicle-button">
+                            Save Driver
+                        </button>
+
+                        <a href="{% url 'drivers' %}" class="clear-search-button">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
+```

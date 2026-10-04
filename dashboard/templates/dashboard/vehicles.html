@@ -1,0 +1,703 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vehicles - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>FleetTrack</h2>
+
+            <span>
+                Fleet Management System
+            </span>
+
+        </div>
+
+
+        <nav>
+
+            <a href="{% url 'dashboard' %}">
+                🏠
+                <span>Dashboard</span>
+            </a>
+
+
+            <a href="{% url 'vehicles' %}"
+               class="active">
+
+                🚗
+                <span>Vehicles</span>
+
+            </a>
+
+
+            <a href="{% url 'live_tracking' %}">
+                📍
+                <span>Live Tracking</span>
+            </a>
+
+
+            <a href="{% url 'fleet_analytics' %}">
+                📊
+                <span>Fleet Analytics</span>
+            </a>
+
+
+            <a href="{% url 'maintenance_records' %}">
+                🔧
+                <span>Maintenance</span>
+            </a>
+
+
+            <a href="{% url 'fuel_records' %}">
+                ⛽
+                <span>Fuel Management</span>
+            </a>
+
+
+            <a href="{% url 'drivers' %}">
+                👨‍✈️
+                <span>Drivers</span>
+            </a>
+
+
+            <a href="{% url 'alerts' %}">
+                🔔
+                <span>Alerts</span>
+            </a>
+
+
+            <a href="{% url 'vehicle_documents' %}">
+                📄
+                <span>Vehicle Documents</span>
+            </a>
+
+
+            <a href="{% url 'trips' %}">
+                🛣️
+                <span>Trips</span>
+            </a>
+
+
+            <a href="{% url 'expenses' %}">
+                💰
+                <span>Expenses</span>
+            </a>
+
+
+            <a href="{% url 'fuel_efficiency' %}">
+                📈
+                <span>Fuel Efficiency</span>
+            </a>
+
+
+            <a href="{% url 'reports' %}">
+                📑
+                <span>Reports</span>
+            </a>
+
+
+            <a href="{% url 'crm_activities' %}">
+                👥
+                <span>CRM Activity</span>
+            </a>
+
+
+            <a href="{% url 'support_tickets' %}">
+                🛠️
+                <span>Support</span>
+            </a>
+
+
+            <a href="{% url 'data_export' %}">
+                📥
+                <span>Data Export</span>
+            </a>
+
+        </nav>
+
+
+        <!-- BOTTOM NAVIGATION -->
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'fleet_settings' %}">
+                ⚙️
+                <span>Settings</span>
+            </a>
+
+
+            <a href="{% url 'user_management' %}">
+                👤
+                <span>User Management</span>
+            </a>
+
+
+            <a href="{% url 'profile' %}">
+                🧑
+                <span>My Profile</span>
+            </a>
+
+
+            <a href="{% url 'logout' %}">
+                🚪
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Fleet Dashboard
+                </h1>
+
+                <p>
+                    Vehicle tracking and fleet management system
+                </p>
+
+            </div>
+
+
+            <div class="user-info">
+
+                <div class="user-avatar">
+
+                    {{ request.user.username|first|upper }}
+
+                </div>
+
+
+                <span>
+
+                    {{ request.user.username }}
+
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             PAGE CONTENT
+        ========================== -->
+
+        <section class="section">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="section-header-row">
+
+                <div>
+
+                    <h2>
+                        Fleet Vehicles
+                    </h2>
+
+                    <p class="section-description">
+
+                        Manage and monitor all vehicles
+                        in your fleet.
+
+                    </p>
+
+                </div>
+
+
+                <a href="{% url 'add_vehicle' %}"
+                   class="small-button">
+
+                    + Add Vehicle
+
+                </a>
+
+            </div>
+
+
+            <!-- =========================
+                 VEHICLE LIST
+            ========================== -->
+
+            <div class="dashboard-panel">
+
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Vehicle List
+                        </h2>
+
+                        <p>
+                            Current vehicles registered
+                            in the system.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH AND FILTER -->
+
+                <div class="search-filter-container">
+
+                    <form method="get"
+                          class="search-filter-form">
+
+
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ search }}"
+                            placeholder="Search registration, type, driver or location"
+                            class="search-input"
+                        >
+
+
+                        <select
+                            name="status"
+                            class="search-select">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+
+                            <option value="active"
+                                {% if selected_status == 'active' %}
+                                    selected
+                                {% endif %}>
+
+                                Active
+
+                            </option>
+
+
+                            <option value="offline"
+                                {% if selected_status == 'offline' %}
+                                    selected
+                                {% endif %}>
+
+                                Offline
+
+                            </option>
+
+
+                            <option value="maintenance"
+                                {% if selected_status == 'maintenance' %}
+                                    selected
+                                {% endif %}>
+
+                                Maintenance
+
+                            </option>
+
+                        </select>
+
+
+                        <button
+                            type="submit"
+                            class="edit-button">
+
+                            🔎 Search
+
+                        </button>
+
+
+                        {% if search or selected_status %}
+
+                            <a
+                                href="{% url 'vehicles' %}"
+                                class="delete-button">
+
+                                Clear
+
+                            </a>
+
+                        {% endif %}
+
+
+                    </form>
+
+                </div>
+
+
+                <!-- VEHICLE TABLE -->
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Vehicle
+                                </th>
+
+                                <th>
+                                    Type
+                                </th>
+
+                                <th>
+                                    Driver
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Speed
+                                </th>
+
+                                <th>
+                                    Location
+                                </th>
+
+                                <th>
+                                    Last Update
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for vehicle in vehicles %}
+
+                            <tr>
+
+
+                                <!-- VEHICLE -->
+
+                                <td>
+
+                                    <strong>
+                                        {{ vehicle.registration_number }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- TYPE -->
+
+                                <td>
+
+                                    {{ vehicle.vehicle_type }}
+
+                                </td>
+
+
+                                <!-- DRIVER -->
+
+                                <td>
+
+                                    {% if vehicle.driver %}
+
+                                        {{ vehicle.driver }}
+
+                                    {% else %}
+
+                                        Not Assigned
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    {% if vehicle.status == 'active' %}
+
+                                        <span class="status-open">
+
+                                            🟢 Active
+
+                                        </span>
+
+
+                                    {% elif vehicle.status == 'offline' %}
+
+                                        <span class="status-pending">
+
+                                            🔴 Offline
+
+                                        </span>
+
+
+                                    {% elif vehicle.status == 'maintenance' %}
+
+                                        <span class="status-resolved">
+
+                                            🟡 Maintenance
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- SPEED -->
+
+                                <td>
+
+                                    {% if vehicle.speed %}
+
+                                        {{ vehicle.speed }}
+                                        km/h
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- LOCATION -->
+
+                                <td>
+
+                                    {% if vehicle.location %}
+
+                                        {{ vehicle.location }}
+
+                                    {% else %}
+
+                                        Unknown
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- LAST UPDATE -->
+
+                                <td>
+
+                                    {{ vehicle.last_update|date:"d M Y, H:i" }}
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="vehicle-actions">
+
+
+                                        <a
+                                            href="{% url 'vehicle_detail' vehicle.id %}"
+                                            class="view-action"
+                                            title="View Vehicle">
+
+                                            👁
+
+                                        </a>
+
+
+                                        <a
+                                            href="{% url 'edit_vehicle' vehicle.id %}"
+                                            class="edit-action"
+                                            title="Edit Vehicle">
+
+                                            ✏️
+
+                                        </a>
+
+
+                                        <a
+                                            href="{% url 'delete_vehicle' vehicle.id %}"
+                                            class="delete-action"
+                                            title="Delete Vehicle">
+
+                                            🗑️
+
+                                        </a>
+
+
+                                    </div>
+
+                                </td>
+
+
+                            </tr>
+
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="8"
+                                    class="empty-vehicles">
+
+
+                                    <div class="empty-icon">
+                                        🚚
+                                    </div>
+
+
+                                    <h3>
+                                        No Vehicles Found
+                                    </h3>
+
+
+                                    <p>
+
+                                        Add your first vehicle
+                                        to begin fleet monitoring.
+
+                                    </p>
+
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 SYSTEM STATUS
+            ========================== -->
+
+            <div class="dashboard-grid">
+
+
+                <div class="dashboard-panel">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h2>
+                                System Status
+                            </h2>
+
+                            <p>
+                                Fleet monitoring system status
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="system-status">
+
+                        <span class="status-dot online"></span>
+
+                        <strong>
+                            Fleet monitoring operational
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-panel">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h2>
+                                Total Vehicles
+                            </h2>
+
+                            <p>
+                                Vehicles currently registered
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="big-number">
+
+                        {{ vehicles|length }}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

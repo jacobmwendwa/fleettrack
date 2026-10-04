@@ -1,0 +1,151 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fuel Management</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Fuel Management</h1>
+                <p>Manage fuel records and monitor fuel costs.</p>
+            </div>
+
+            <a href="{% url 'add_fuel' %}" class="add-vehicle-button">
+                + Add Fuel Record
+            </a>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-filter-container">
+
+            <form method="get" class="search-filter-form">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search vehicle, fuel station or notes..."
+                    class="search-input"
+                >
+
+                <button type="submit" class="edit-button">
+                    Search
+                </button>
+
+                {% if search %}
+                    <a href="{% url 'fuel_records' %}" class="delete-button">
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        <!-- FUEL RECORDS -->
+        <div class="section">
+
+            <h2>Fuel Records</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Fuel Date</th>
+                            <th>Litres</th>
+                            <th>Cost</th>
+                            <th>Mileage</th>
+                            <th>Fuel Station</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for record in fuel_records %}
+
+                        <tr>
+                            <td>
+                                {{ record.vehicle.registration_number }}
+                            </td>
+
+                            <td>
+                                {{ record.fuel_date }}
+                            </td>
+
+                            <td>
+                                {{ record.litres }}
+                            </td>
+
+                            <td>
+                                KES {{ record.cost }}
+                            </td>
+
+                            <td>
+                                {% if record.mileage %}
+                                    {{ record.mileage }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if record.fuel_station %}
+                                    {{ record.fuel_station }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if record.notes %}
+                                    {{ record.notes }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7" style="text-align:center;">
+                                No fuel records found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+```

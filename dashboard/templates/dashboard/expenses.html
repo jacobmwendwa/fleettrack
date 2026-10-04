@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Expenses</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Expenses</h1>
+
+                <p>
+                    View vehicle expense records.
+                </p>
+
+            </div>
+
+            <a href="{% url 'add_expense' %}"
+               class="add-vehicle-button">
+                + Add Expense
+            </a>
+
+        </div>
+
+        <div class="search-filter-container">
+
+    <form method="get" class="search-filter-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search vehicle, description or notes"
+            class="search-input"
+        >
+
+        <button
+            type="submit"
+            class="edit-button">
+            Search
+        </button>
+
+        <a
+            href="{% url 'expenses' %}"
+            class="delete-button">
+            Clear
+        </a>
+
+    </form>
+
+</div>
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Vehicle</th>
+                        <th>Expense Type</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for expense in expenses %}
+
+                    <tr>
+
+                        <td>
+                            {{ expense.vehicle.registration_number }}
+                        </td>
+
+                        <td>
+                            {{ expense.get_expense_type_display }}
+                        </td>
+
+                        <td>
+                            {{ expense.expense_date|date:"d M Y" }}
+                        </td>
+
+                        <td>
+                            {{ expense.amount }}
+                        </td>
+
+                        <td>
+                            {{ expense.description|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ expense.notes|default:"-" }}
+                        </td>
+
+                        <td class="driver-actions">
+
+                            <a
+                                href="{% url 'edit_expense' expense.id %}"
+                                class="edit-button">
+                                Edit
+                            </a>
+
+                            <a
+                                href="{% url 'delete_expense' expense.id %}"
+                                class="delete-button">
+                                Delete
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="7"
+                            style="text-align:center; padding:30px;">
+
+                            No expenses found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

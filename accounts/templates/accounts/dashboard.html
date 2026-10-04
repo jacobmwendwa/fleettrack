@@ -1,0 +1,260 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                <h2>MyProject</h2>
+            </div>
+
+            <nav>
+                <a href="#" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="#">
+                    📋 Tasks
+                </a>
+
+                <a href="#">
+                    📊 Reports
+                </a>
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="{% url 'logout' %}">
+                    🚪 Logout
+                </a>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Top Bar -->
+            <header class="topbar">
+
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Manage your tasks and activities.</p>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+
+                    <span>{{ user.username }}</span>
+                </div>
+
+            </header>
+
+
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+
+                <h2>
+                    Welcome, {{ user.username }}! 👋
+                </h2>
+
+                <p>
+                    Here's an overview of your tasks.
+                </p>
+
+            </section>
+
+
+            <!-- Statistics Cards -->
+            <section class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+
+                    <div>
+                        <h3>{{ tasks|length }}</h3>
+                        <p>Total Tasks</p>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+
+                    <div>
+                        <h3>Active</h3>
+                        <p>Tasks to complete</p>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+
+                    <div>
+                        <h3>Account</h3>
+                        <p>Personal workspace</p>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- Tasks Section -->
+            <section class="tasks-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Your Tasks</h2>
+                        <p>Create and manage your tasks.</p>
+                    </div>
+
+                </div>
+
+
+                <!-- Add Task -->
+                <div class="add-task">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="text"
+                            name="title"
+                            placeholder="Enter a new task..."
+                            required
+                        >
+
+                        <button type="submit">
+                            + Add Task
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- Task List -->
+                <div class="task-list">
+
+                    {% for task in tasks %}
+
+                    <div class="task-item">
+
+                        <div class="task-name">
+
+                            {% if task.completed %}
+
+                                <span class="completed-task">
+                                    {{ task.title }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    {{ task.title }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="task-actions">
+
+                            <!-- Complete / Undo -->
+                            <form
+                                method="post"
+                                action="{% url 'toggle_task' task.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="done-button"
+                                >
+                                    {% if task.completed %}
+                                        Undo
+                                    {% else %}
+                                        Done
+                                    {% endif %}
+                                </button>
+
+                            </form>
+
+
+                            <!-- Delete -->
+                            <form
+                                method="post"
+                                action="{% url 'delete_task' task.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="delete-button"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="empty-tasks">
+
+                        <div class="empty-icon">
+                            📋
+                        </div>
+
+                        <h3>No tasks yet</h3>
+
+                        <p>
+                            Add your first task using the form above.
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

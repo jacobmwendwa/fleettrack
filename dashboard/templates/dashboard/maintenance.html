@@ -1,0 +1,194 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Maintenance Management</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Maintenance Management</h1>
+                <p>Manage vehicle maintenance records and service schedules.</p>
+            </div>
+
+            <a href="{% url 'add_maintenance' %}" class="add-vehicle-button">
+                + Add Maintenance
+            </a>
+        </div>
+
+        <!-- SEARCH AND FILTER -->
+        <div class="search-filter-container">
+
+            <form method="get" class="search-filter-form">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search vehicle, description, provider or notes..."
+                    class="search-input"
+                >
+
+                <select name="status" class="search-select">
+
+                    <option value="">All Statuses</option>
+
+                    <option value="scheduled"
+                        {% if selected_status == 'scheduled' %}selected{% endif %}>
+                        Scheduled
+                    </option>
+
+                    <option value="in_progress"
+                        {% if selected_status == 'in_progress' %}selected{% endif %}>
+                        In Progress
+                    </option>
+
+                    <option value="completed"
+                        {% if selected_status == 'completed' %}selected{% endif %}>
+                        Completed
+                    </option>
+
+                    <option value="cancelled"
+                        {% if selected_status == 'cancelled' %}selected{% endif %}>
+                        Cancelled
+                    </option>
+
+                </select>
+
+                <button type="submit" class="edit-button">
+                    Search
+                </button>
+
+                {% if search or selected_status %}
+                    <a href="{% url 'maintenance_records' %}" class="delete-button">
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        <!-- MAINTENANCE RECORDS -->
+        <div class="section">
+
+            <h2>Maintenance Records</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Service Date</th>
+                            <th>Next Service</th>
+                            <th>Mileage</th>
+                            <th>Cost</th>
+                            <th>Provider</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for record in maintenance_records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.vehicle.registration_number }}
+                            </td>
+
+                            <td>
+                                {{ record.get_maintenance_type_display }}
+                            </td>
+
+                            <td>
+                                {% if record.description %}
+                                    {{ record.description }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ record.service_date }}
+                            </td>
+
+                            <td>
+                                {% if record.next_service_date %}
+                                    {{ record.next_service_date }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if record.mileage %}
+                                    {{ record.mileage }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                KES {{ record.cost }}
+                            </td>
+
+                            <td>
+                                {% if record.service_provider %}
+                                    {{ record.service_provider }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ record.get_status_display }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="9" style="text-align: center;">
+                                No maintenance records found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+```
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>My Profile</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>My Profile</h1>
+
+                <p>
+                    View your account information.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="form-container">
+
+            <p>
+                <strong>Username:</strong>
+                {{ user.username }}
+            </p>
+
+            <p>
+                <strong>First Name:</strong>
+                {{ user.first_name|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Last Name:</strong>
+                {{ user.last_name|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                {{ user.email|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Date Joined:</strong>
+                {{ user.date_joined|date:"d M Y H:i" }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

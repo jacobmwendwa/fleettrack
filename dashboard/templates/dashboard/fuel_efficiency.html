@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Fuel Efficiency</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Fuel Efficiency</h1>
+
+                <p>
+                    View basic fuel consumption and efficiency
+                    information for each vehicle.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Vehicle</th>
+                        <th>Fuel Used (L)</th>
+                        <th>Fuel Cost</th>
+                        <th>Distance (km)</th>
+                        <th>Fuel Efficiency (km/L)</th>
+                        <th>Cost per km</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in efficiency_data %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.vehicle.registration_number }}
+                        </td>
+
+                        <td>
+                            {{ item.total_litres|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.total_cost|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.distance|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.efficiency|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.cost_per_km|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6"
+                            style="text-align:center; padding:30px;">
+
+                            No fuel efficiency data available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

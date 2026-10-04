@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Delete Expense</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Delete Expense</h1>
+
+                <p>
+                    Confirm that you want to delete this expense.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="form-container">
+
+            <p>
+                <strong>Vehicle:</strong>
+                {{ expense.vehicle.registration_number }}
+            </p>
+
+            <p>
+                <strong>Expense Type:</strong>
+                {{ expense.get_expense_type_display }}
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                {{ expense.expense_date|date:"d M Y" }}
+            </p>
+
+            <p>
+                <strong>Amount:</strong>
+                {{ expense.amount }}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                {{ expense.description|default:"-" }}
+            </p>
+
+            <p>
+                Are you sure you want to delete this expense?
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="delete-button">
+                    Delete Expense
+                </button>
+
+                <a
+                    href="{% url 'expenses' %}"
+                    class="edit-button">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

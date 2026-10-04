@@ -1,0 +1,168 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Activity - FleetTrack</title>
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+            <a href="{% url 'vehicles' %}">🚚 Vehicles</a>
+            <a href="{% url 'live_tracking' %}">📍 Live Tracking</a>
+            <a href="{% url 'alerts' %}">⚠️ Alerts</a>
+            <a href="{% url 'drivers' %}">👥 Drivers</a>
+            <a href="{% url 'maintenance_records' %}">🔧 Maintenance</a>
+            <a href="{% url 'fuel_records' %}">⛽ Fuel Management</a>
+            <a href="{% url 'trips' %}">🚗 Trips</a>
+            <a href="{% url 'expenses' %}">💰 Expenses</a>
+            <a href="{% url 'fuel_efficiency' %}">📈 Fuel Efficiency</a>
+            <a href="{% url 'reports' %}">📊 Reports</a>
+            <a href="{% url 'crm_activities' %}" class="active">👥 CRM Activity</a>
+            <a href="{% url 'support_tickets' %}">🎧 Support & Escalations</a>
+            <a href="{% url 'fleet_settings' %}">⚙️ Settings</a>
+            <a href="{% url 'user_management' %}">👤 User Management</a>
+            <a href="{% url 'data_export' %}">📥 Data Export</a>
+            <a href="/accounts/logout/">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+                <div>
+                    <h1>CRM Activity</h1>
+                    <p>Track customer and client interactions.</p>
+                </div>
+
+                <a href="{% url 'add_crm_activity' %}" class="add-vehicle-button">
+                    + Add Activity
+                </a>
+            </div>
+
+            <div class="search-filter-container">
+                <form method="get" class="search-filter-form">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Search client or activity..."
+                        class="search-input"
+                    >
+
+                    <select name="status" class="search-select">
+                        <option value="">All Statuses</option>
+                        <option value="open" {% if selected_status == 'open' %}selected{% endif %}>
+                            Open
+                        </option>
+                        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>
+                            Pending
+                        </option>
+                        <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>
+                            Resolved
+                        </option>
+                    </select>
+
+                    <button type="submit" class="edit-button">
+                        Search
+                    </button>
+
+                    <a href="{% url 'crm_activities' %}" class="delete-button">
+                        Clear
+                    </a>
+
+                </form>
+            </div>
+
+            <div class="section">
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Activity</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for activity in crm_activities %}
+
+                            <tr>
+                                <td>{{ activity.client_name }}</td>
+
+                                <td>
+                                    {{ activity.get_activity_type_display }}
+                                </td>
+
+                                <td>
+                                    {{ activity.description|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {% if activity.status == 'open' %}
+                                        <span class="status-open">Open</span>
+                                    {% elif activity.status == 'pending' %}
+                                        <span class="status-pending">Pending</span>
+                                    {% else %}
+                                        <span class="status-resolved">Resolved</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ activity.activity_date }}
+                                </td>
+
+                                <td>
+                                    {{ activity.notes|default:"-" }}
+                                </td>
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="6" style="text-align:center;">
+                                    No CRM activities found.
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1281 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Fleet Analytics</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/style.css' %}"
+    >
+
+    <style>
+
+        .analytics-page {
+            padding: 30px;
+        }
+
+        .analytics-header {
+            margin-bottom: 30px;
+        }
+
+        .analytics-header h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #111827;
+        }
+
+        .analytics-header p {
+            margin-top: 8px;
+            color: #6b7280;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .analytics-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .analytics-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .analytics-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .analytics-section-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .analytics-section-header h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .analytics-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .analytics-table th {
+            text-align: left;
+            padding: 14px 18px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .analytics-table td {
+            padding: 15px 18px;
+            border-top: 1px solid #eef2f7;
+            font-size: 14px;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .analytics-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .vehicle-name {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-offline {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .status-maintenance {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .analytics-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .analytics-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            background: #2563eb;
+            color: white;
+        }
+
+        
+
+        @media (max-width: 600px) {
+
+            .analytics-page {
+                padding: 20px;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-charts {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.chart-card {
+    flex: 1;
+    width: 50%;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card h2 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    line-height: 20px;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 160px;
+}
+
+.chart-container canvas {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: 160px !important;
+}
+
+@media (max-width: 900px) {
+    .analytics-charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+        }
+
+        .analytics-trends {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.trend-card {
+    flex: 1;
+}
+
+@media (max-width: 800px) {
+
+    .analytics-trends {
+        flex-direction: column;
+    }
+
+    .trend-card {
+        width: 100%;
+    }
+
+}
+
+/* =================================
+   OVERSPEED ANALYSIS
+   ================================= */
+
+.analytics-section {
+    width: 100%;
+    margin: 25px 0;
+}
+
+.section-header {
+    margin-bottom: 12px;
+}
+
+.section-header h2 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.section-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.analytics-table th {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.analytics-table td {
+    padding: 12px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.analytics-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.overspeed-warning {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 5px;
+    font-weight: 600;
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.overspeed-normal {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 5px;
+    font-weight: 600;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.empty-table {
+    text-align: center !important;
+    color: #6b7280;
+    padding: 25px !important;
+}
+
+/* =================================
+   OVERSPEED SEVERITY
+   ================================= */
+
+.severity-moderate,
+.severity-high,
+.severity-critical {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.severity-moderate {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.severity-high {
+    background: #fed7aa;
+    color: #9a3412;
+}
+
+.severity-critical {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="analytics-page">
+
+    <div class="analytics-header">
+
+        <h1>
+            Fleet Analytics
+        </h1>
+
+        <div class="report-filter">
+
+    <form method="get">
+
+        <label for="period">
+            Report Period
+        </label>
+
+        <select
+            name="period"
+            id="period"
+            onchange="this.form.submit()"
+        >
+
+            <option
+                value="all"
+                {% if period == 'all' %}selected{% endif %}
+            >
+                All Time
+            </option>
+
+            <option
+                value="today"
+                {% if period == 'today' %}selected{% endif %}
+            >
+                Today
+            </option>
+
+            <option
+                value="7days"
+                {% if period == '7days' %}selected{% endif %}
+            >
+                Last 7 Days
+            </option>
+
+            <option
+                value="30days"
+                {% if period == '30days' %}selected{% endif %}
+            >
+                Last 30 Days
+            </option>
+
+        </select>
+
+    </form>
+
+</div>
+
+        <p>
+            Overview of fleet activity,
+            GPS performance and vehicle statistics.
+        </p>
+
+    </div>
+
+
+    <div class="analytics-actions">
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="analytics-button"
+        >
+            ← Dashboard
+        </a>
+
+        <a
+            href="{% url 'live_tracking' %}"
+            class="analytics-button"
+        >
+            Live Tracking
+        </a>
+
+    </div>
+
+
+    <!-- MAIN KPI CARDS -->
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Total Vehicles
+            </div>
+
+            <div class="analytics-value">
+                {{ total_vehicles }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Active Vehicles
+            </div>
+
+            <div class="analytics-value">
+                {{ active_vehicles }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Offline Vehicles
+            </div>
+
+            <div class="analytics-value">
+                {{ offline_vehicles }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Maintenance
+            </div>
+
+            <div class="analytics-value">
+                {{ maintenance_vehicles }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                GPS Records
+            </div>
+
+            <div class="analytics-value">
+                {{ total_gps_records }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Average Fleet Speed
+            </div>
+
+            <div class="analytics-value">
+                {{ average_fleet_speed|floatformat:1 }}
+                km/h
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Maximum Fleet Speed
+            </div>
+
+            <div class="analytics-value">
+                {{ maximum_fleet_speed|floatformat:1 }}
+                km/h
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-label">
+                Overspeed Records
+            </div>
+
+            <div class="analytics-value">
+                {{ overspeed_records }}
+            </div>
+
+        </div>
+
+    </div>
+
+    {{ overspeed_chart|json_script:"overspeed-chart-data" }}
+
+    <div class="analytics-charts">
+
+    <div class="chart-card">
+        <h2>Fleet Status Distribution</h2>
+
+        <div class="chart-container">
+            <canvas id="fleetStatusChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h2>Distance Travelled by Vehicle</h2>
+
+        <div class="chart-container">
+            <canvas id="distanceChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<div class="analytics-trends">
+
+    <div class="chart-card trend-card">
+
+        <h2>Daily GPS Activity</h2>
+
+        <div class="chart-container">
+            <canvas id="activityChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="chart-card trend-card">
+
+        <h2>Daily Average Speed</h2>
+
+        <div class="chart-container">
+            <canvas id="speedTrendChart"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
+
+    <!-- VEHICLE STATISTICS -->
+
+    <div class="analytics-section">
+
+        <div class="analytics-section-header">
+
+            <h2>
+                Vehicle Performance
+            </h2>
+
+        </div>
+
+
+        <div class="analytics-table-wrapper">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Vehicle
+                        </th>
+
+                        <th>
+                            Driver
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            GPS Records
+                        </th>
+
+                        <th>
+                            Distance
+                        </th>
+
+                        <th>
+                            Average Speed
+                        </th>
+
+                        <th>
+                            Maximum Speed
+                        </th>
+
+                        <th>
+                            Overspeed
+                        </th>
+
+                        <th>
+                            History
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in vehicle_statistics %}
+
+                    <tr>
+
+                        <td class="vehicle-name">
+
+                            {{ item.vehicle.registration_number }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.vehicle.driver|default:"Not Assigned" }}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item.vehicle.status == 'active' %}
+
+                                <span
+                                    class="status-badge status-active"
+                                >
+                                    Active
+                                </span>
+
+                            {% elif item.vehicle.status == 'maintenance' %}
+
+                                <span
+                                    class="status-badge status-maintenance"
+                                >
+                                    Maintenance
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="status-badge status-offline"
+                                >
+                                    Offline
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.gps_records }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.distance|floatformat:2 }}
+                            km
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.average_speed|floatformat:1 }}
+                            km/h
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.maximum_speed|floatformat:1 }}
+                            km/h
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.overspeed_events }}
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{% url 'vehicle_history' item.vehicle.id %}"
+                            >
+                                View History
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            No vehicles found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <!-- ================================
+     OVERSPEED ANALYSIS
+     ================================ -->
+
+<div class="analytics-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Overspeed Analysis</h2>
+
+            <p>
+                Overspeed threshold:
+                <strong>{{ overspeed_threshold }} km/h</strong>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- ================================
+     OVERSPEED ALERTS
+     ================================ -->
+
+<div class="analytics-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Overspeed Alerts</h2>
+
+            <p>
+                Vehicles with recorded speeds above
+                <strong>{{ overspeed_threshold }} km/h</strong>.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <table class="analytics-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Vehicle</th>
+<th>Driver</th>
+<th>Overspeed Events</th>
+<th>Overspeed %</th>
+<th>Maximum Speed</th>
+<th>Severity</th>
+<th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for alert in overspeed_alerts %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ alert.registration }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ alert.driver|default:"Not Assigned" }}
+                    </td>
+
+                    <td>
+
+                        <span class="overspeed-warning">
+                            {{ alert.overspeed_events }}
+                        </span>
+
+                    </td>
+
+                    <td>
+                        {{ alert.overspeed_percentage|floatformat:1 }}%
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            {{ alert.maximum_speed|floatformat:1 }}
+                            km/h
+                        </strong>
+
+                    </td>
+                    <td>
+
+    {% if alert.severity == 'critical' %}
+
+        <span class="severity-critical">
+            Critical
+        </span>
+
+    {% elif alert.severity == 'high' %}
+
+        <span class="severity-high">
+            High
+        </span>
+
+    {% else %}
+
+        <span class="severity-moderate">
+            Moderate
+        </span>
+
+    {% endif %}
+
+</td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'vehicle_history' alert.vehicle_id %}"
+                            class="history-button"
+                        >
+                            View History
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty-table"
+                    >
+                        No overspeed alerts for this period.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+    <!-- ================================
+     OVERSPEED EVENTS CHART
+     ================================ -->
+
+<div class="analytics-charts">
+
+    <div class="chart-card">
+
+        <h2>Overspeed Events by Vehicle</h2>
+
+        <div class="chart-container">
+
+            <canvas id="overspeedChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <div class="table-container">
+
+        <table class="analytics-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Vehicle</th>
+
+                    <th>GPS Records</th>
+
+                    <th>Average Speed</th>
+
+                    <th>Maximum Speed</th>
+
+                    <th>Overspeed Events</th>
+
+                    <th>Overspeed %</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in vehicle_statistics %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ item.vehicle.registration_number }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ item.gps_records }}
+                    </td>
+
+                    <td>
+                        {{ item.average_speed|floatformat:1 }}
+                        km/h
+                    </td>
+
+                    <td>
+                        {{ item.maximum_speed|floatformat:1 }}
+                        km/h
+                    </td>
+
+                    <td>
+
+                        {% if item.overspeed_events > 0 %}
+
+                            <span class="overspeed-warning">
+                                {{ item.overspeed_events }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="overspeed-normal">
+                                0
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.overspeed_percentage|floatformat:1 }}%
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty-table"
+                    >
+                        No GPS records available
+                        for this period.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    /* ================================
+       FLEET STATUS DISTRIBUTION
+       ================================ */
+
+    const statusData = {{ status_chart|safe }};
+
+    new Chart(
+        document.getElementById('fleetStatusChart'),
+        {
+            type: 'doughnut',
+
+            data: {
+                labels: [
+                    'Active',
+                    'Offline',
+                    'Maintenance'
+                ],
+
+                datasets: [{
+                    data: [
+                        statusData.active,
+                        statusData.offline,
+                        statusData.maintenance
+                    ]
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false
+            }
+        }
+    );
+
+
+    /* ================================
+       DISTANCE TRAVELLED
+       ================================ */
+
+    const distanceData = {{ distance_chart|safe }};
+
+    new Chart(
+        document.getElementById('distanceChart'),
+        {
+            type: 'bar',
+
+            data: {
+                labels: distanceData.map(
+                    item => item.registration
+                ),
+
+                datasets: [{
+                    label: 'Distance (km)',
+
+                    data: distanceData.map(
+                        item => item.distance
+                    )
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    );
+
+
+    /* ================================
+       DAILY GPS ACTIVITY
+       ================================ */
+
+    const activityData = {{ activity_chart|safe }};
+
+    new Chart(
+        document.getElementById('activityChart'),
+        {
+            type: 'line',
+
+            data: {
+                labels: activityData.map(
+                    item => item.day
+                ),
+
+                datasets: [{
+                    label: 'GPS Records',
+
+                    data: activityData.map(
+                        item => item.records
+                    ),
+
+                    tension: 0.3,
+                    fill: false
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    );
+
+
+    /* ================================
+       DAILY AVERAGE SPEED
+       ================================ */
+
+    new Chart(
+        document.getElementById('speedTrendChart'),
+        {
+            type: 'line',
+
+            data: {
+                labels: activityData.map(
+                    item => item.day
+                ),
+
+                datasets: [{
+                    label: 'Average Speed (km/h)',
+
+                    data: activityData.map(
+                        item => item.average_speed
+                    ),
+
+                    tension: 0.3,
+                    fill: false
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    );
+
+       // =================================
+    // OVERSPEED EVENTS CHART
+    // =================================
+
+    // =================================
+// OVERSPEED EVENTS CHART
+// =================================
+
+const overspeedData = JSON.parse(
+    document.getElementById(
+        'overspeed-chart-data'
+    ).textContent
+);
+
+new Chart(
+    document.getElementById('overspeedChart'),
+    {
+        type: 'bar',
+
+        data: {
+            labels: overspeedData.map(
+                item => item.registration
+            ),
+
+            datasets: [{
+                label: 'Overspeed Events',
+
+                data: overspeedData.map(
+                    item => item.overspeed_events
+                )
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }
+);
+
+</script>
+
+</body>
+
+</html>

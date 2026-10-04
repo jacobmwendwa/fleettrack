@@ -1,0 +1,112 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Sign Up - FleetTrack</title>
+
+<link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+```
+
+</head>
+
+<body>
+
+<div class="auth-card">
+
+```
+<h1>Sign Up</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    <label for="{{ form.username.id_for_label }}">Username:</label>
+    {{ form.username }}
+    {{ form.username.errors }}
+
+    <label for="{{ form.email.id_for_label }}">Email address:</label>
+    {{ form.email }}
+    {{ form.email.errors }}
+
+    <label for="{{ form.password1.id_for_label }}">Password:</label>
+
+<div class="password-wrapper">
+    {{ form.password1 }}
+
+    <button
+        type="button"
+        class="password-toggle"
+        onclick="togglePassword('{{ form.password1.id_for_label }}', this)"
+        aria-label="Show password"
+    >
+        <span class="eye-icon"></span>
+    </button>
+</div>
+
+{{ form.password1.errors }}
+
+
+<label for="{{ form.password2.id_for_label }}">Confirm password:</label>
+
+<div class="password-wrapper">
+    {{ form.password2 }}
+
+    <button
+        type="button"
+        class="password-toggle"
+        onclick="togglePassword('{{ form.password2.id_for_label }}', this)"
+        aria-label="Show password"
+    >
+        <span class="eye-icon"></span>
+    </button>
+</div>
+
+{{ form.password2.errors }}
+
+    <p><strong>Password requirements:</strong></p>
+
+    <ul>
+        <li>At least 8 characters</li>
+        <li>At least one uppercase letter</li>
+        <li>At least one lowercase letter</li>
+        <li>At least one number</li>
+        <li>At least one symbol</li>
+    </ul>
+
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>
+    Already have an account?
+    <a href="{% url 'login' %}">Login</a>
+</p>
+```
+
+</div>
+
+<script>
+function togglePassword(fieldId, button) {
+    const field = document.getElementById(fieldId);
+    const eye = button.querySelector('.eye-icon');
+
+    if (field.type === "password") {
+        field.type = "text";
+        eye.classList.add("eye-open");
+        button.setAttribute("aria-label", "Hide password");
+    } else {
+        field.type = "password";
+        eye.classList.remove("eye-open");
+        button.setAttribute("aria-label", "Show password");
+    }
+}
+</script>
+
+</body>
+</html>

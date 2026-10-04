@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Support Issue - FleetTrack</title>
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+            <a href="{% url 'vehicles' %}">🚚 Vehicles</a>
+            <a href="{% url 'live_tracking' %}">📍 Live Tracking</a>
+            <a href="{% url 'alerts' %}">⚠️ Alerts</a>
+            <a href="{% url 'drivers' %}">👥 Drivers</a>
+            <a href="{% url 'maintenance_records' %}">🔧 Maintenance</a>
+            <a href="{% url 'fuel_records' %}">⛽ Fuel Management</a>
+            <a href="{% url 'trips' %}">🚗 Trips</a>
+            <a href="{% url 'expenses' %}">💰 Expenses</a>
+            <a href="{% url 'fuel_efficiency' %}">📈 Fuel Efficiency</a>
+            <a href="{% url 'reports' %}">📊 Reports</a>
+            <a href="{% url 'crm_activities' %}">👥 CRM Activity</a>
+            <a href="{% url 'support_tickets' %}" class="active">
+                🎧 Support & Escalations
+            </a>
+            <a href="{% url 'fleet_settings' %}">⚙️ Settings</a>
+            <a href="{% url 'user_management' %}">👤 User Management</a>
+            <a href="{% url 'data_export' %}">📥 Data Export</a>
+            <a href="/accounts/logout/">🚪 Logout</a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Add Support Issue</h1>
+                    <p>Record a customer or vehicle support issue.</p>
+                </div>
+
+            </div>
+
+            <div class="form-container">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="add-vehicle-button"
+                        >
+                            Save Support Issue
+                        </button>
+
+                        <a
+                            href="{% url 'support_tickets' %}"
+                            class="delete-button"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Reports</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Fleet Reports</h1>
+
+                <p>
+                    View a simple summary of vehicles, fuel,
+                    maintenance, trips and expenses.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- VEHICLE SUMMARY -->
+
+        <div class="section">
+
+            <h2>Vehicle Summary</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Total Vehicles</td>
+                            <td>{{ total_vehicles }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Active Vehicles</td>
+                            <td>{{ active_vehicles }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Offline Vehicles</td>
+                            <td>{{ offline_vehicles }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Vehicles in Maintenance</td>
+                            <td>{{ maintenance_vehicles }}</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- FUEL SUMMARY -->
+
+        <div class="section">
+
+            <h2>Fuel Summary</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Total Fuel Used</td>
+                            <td>
+                                {{ total_fuel_litres|floatformat:2 }} L
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Total Fuel Cost</td>
+                            <td>
+                                {{ total_fuel_cost|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAINTENANCE SUMMARY -->
+
+        <div class="section">
+
+            <h2>Maintenance Summary</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Total Maintenance Records</td>
+                            <td>
+                                {{ total_maintenance_records }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Total Maintenance Cost</td>
+                            <td>
+                                {{ total_maintenance_cost|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRIP SUMMARY -->
+
+        <div class="section">
+
+            <h2>Trip Summary</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Total Trips</td>
+                            <td>
+                                {{ total_trips }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Completed Trips</td>
+                            <td>
+                                {{ completed_trips }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Total Distance</td>
+                            <td>
+                                {{ total_distance|floatformat:2 }} km
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXPENSE SUMMARY -->
+
+        <div class="section">
+
+            <h2>Expense Summary</h2>
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Total Expenses</td>
+                            <td>
+                                {{ total_expenses|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

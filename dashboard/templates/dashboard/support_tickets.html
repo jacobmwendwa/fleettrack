@@ -1,0 +1,278 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support & Escalations - FleetTrack</title>
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🚚 FleetTrack
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+            <a href="{% url 'vehicles' %}">🚚 Vehicles</a>
+            <a href="{% url 'live_tracking' %}">📍 Live Tracking</a>
+            <a href="{% url 'alerts' %}">⚠️ Alerts</a>
+            <a href="{% url 'drivers' %}">👥 Drivers</a>
+            <a href="{% url 'maintenance_records' %}">🔧 Maintenance</a>
+            <a href="{% url 'fuel_records' %}">⛽ Fuel Management</a>
+            <a href="{% url 'trips' %}">🚗 Trips</a>
+            <a href="{% url 'expenses' %}">💰 Expenses</a>
+            <a href="{% url 'fuel_efficiency' %}">📈 Fuel Efficiency</a>
+            <a href="{% url 'reports' %}">📊 Reports</a>
+            <a href="{% url 'crm_activities' %}">👥 CRM Activity</a>
+            <a href="{% url 'support_tickets' %}" class="active">
+                🎧 Support & Escalations
+            </a>
+            <a href="{% url 'fleet_settings' %}">⚙️ Settings</a>
+            <a href="{% url 'user_management' %}">👤 User Management</a>
+            <a href="{% url 'data_export' %}">📥 Data Export</a>
+            <a href="/accounts/logout/">🚪 Logout</a>
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Support & Escalations</h1>
+                    <p>Monitor customer and vehicle support issues.</p>
+                </div>
+
+                <a
+                    href="{% url 'add_support_ticket' %}"
+                    class="add-vehicle-button"
+                >
+                    + Add Support Issue
+                </a>
+
+            </div>
+
+            <div class="search-filter-container">
+
+                <form method="get" class="search-filter-form">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Search issue or vehicle..."
+                        class="search-input"
+                    >
+
+                    <select name="priority" class="search-select">
+
+                        <option value="">All Priorities</option>
+
+                        <option
+                            value="low"
+                            {% if selected_priority == 'low' %}selected{% endif %}
+                        >
+                            Low
+                        </option>
+
+                        <option
+                            value="medium"
+                            {% if selected_priority == 'medium' %}selected{% endif %}
+                        >
+                            Medium
+                        </option>
+
+                        <option
+                            value="high"
+                            {% if selected_priority == 'high' %}selected{% endif %}
+                        >
+                            High
+                        </option>
+
+                    </select>
+
+                    <select name="status" class="search-select">
+
+                        <option value="">All Statuses</option>
+
+                        <option
+                            value="open"
+                            {% if selected_status == 'open' %}selected{% endif %}
+                        >
+                            Open
+                        </option>
+
+                        <option
+                            value="in_progress"
+                            {% if selected_status == 'in_progress' %}selected{% endif %}
+                        >
+                            In Progress
+                        </option>
+
+                        <option
+                            value="resolved"
+                            {% if selected_status == 'resolved' %}selected{% endif %}
+                        >
+                            Resolved
+                        </option>
+
+                    </select>
+
+                    <button type="submit" class="edit-button">
+                        Search
+                    </button>
+
+                    <a
+                        href="{% url 'support_tickets' %}"
+                        class="delete-button"
+                    >
+                        Clear
+                    </a>
+
+                </form>
+
+            </div>
+
+            <div class="section">
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Issue</th>
+                                <th>Vehicle</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for ticket in support_tickets %}
+
+                            <tr>
+
+                                <td>{{ ticket.issue }}</td>
+
+                                <td>
+                                    {% if ticket.vehicle %}
+                                        {{ ticket.vehicle.registration_number }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+
+                                    {% if ticket.priority == 'high' %}
+                                        <span class="priority-high">High</span>
+
+                                    {% elif ticket.priority == 'medium' %}
+                                        <span class="priority-medium">Medium</span>
+
+                                    {% else %}
+                                        <span class="priority-low">Low</span>
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if ticket.status == 'open' %}
+                                        <span class="status-open">Open</span>
+
+                                    {% elif ticket.status == 'in_progress' %}
+                                        <span class="status-pending">
+                                            In Progress
+                                        </span>
+
+                                    {% else %}
+                                        <span class="status-resolved">
+                                            Resolved
+                                        </span>
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ ticket.description|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ ticket.created_at|date:"Y-m-d H:i" }}
+                                </td>
+
+                                <td>
+
+                                    {% if ticket.status != 'resolved' %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'resolve_support_ticket' ticket.id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="resolve-button"
+                                        >
+                                            Resolve
+                                        </button>
+
+                                    </form>
+
+                                    {% else %}
+
+                                        <span class="status-resolved">
+                                            Completed
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="7" style="text-align:center;">
+                                    No support issues found.
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

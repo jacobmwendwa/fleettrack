@@ -1,0 +1,1055 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fleet Management Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+   <!-- =========================
+     SIDEBAR
+========================== -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>FleetTrack</h2>
+        <span>Fleet Management System</span>
+    </div>
+
+    <nav>
+
+        <!-- Dashboard -->
+        <a href="{% url 'dashboard' %}" class="dashboard-link active">
+            <span>🏠</span>
+            <span>Dashboard</span>
+        </a>
+
+
+        <!-- Fleet Management -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>🚚</span>
+                <span>Fleet Management</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'vehicles' %}">
+                    <span>🚗</span>
+                    <span>Vehicles</span>
+                </a>
+
+                <a href="{% url 'live_tracking' %}">
+                    <span>📍</span>
+                    <span>Live Tracking</span>
+                </a>
+
+                <a href="{% url 'fleet_analytics' %}">
+                    <span>📊</span>
+                    <span>Fleet Analytics</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Operations -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>🛣️</span>
+                <span>Operations</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'drivers' %}">
+                    <span>👨‍✈️</span>
+                    <span>Drivers</span>
+                </a>
+
+                <a href="{% url 'trips' %}">
+                    <span>🛣️</span>
+                    <span>Trips</span>
+                </a>
+
+                <a href="{% url 'expenses' %}">
+                    <span>💰</span>
+                    <span>Expenses</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Maintenance & Fuel -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>🔧</span>
+                <span>Maintenance &amp; Fuel</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'maintenance_records' %}">
+                    <span>🔧</span>
+                    <span>Maintenance</span>
+                </a>
+
+                <a href="{% url 'fuel_records' %}">
+                    <span>⛽</span>
+                    <span>Fuel Management</span>
+                </a>
+
+                <a href="{% url 'fuel_efficiency' %}">
+                    <span>📈</span>
+                    <span>Fuel Efficiency</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Alerts & Documents -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>🔔</span>
+                <span>Alerts &amp; Documents</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'alerts' %}">
+                    <span>🔔</span>
+                    <span>Alerts</span>
+                </a>
+
+                <a href="{% url 'vehicle_documents' %}">
+                    <span>📄</span>
+                    <span>Vehicle Documents</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- CRM & Support -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>👥</span>
+                <span>CRM &amp; Support</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'crm_activities' %}">
+                    <span>👥</span>
+                    <span>CRM Activity</span>
+                </a>
+
+                <a href="{% url 'support_tickets' %}">
+                    <span>🛠️</span>
+                    <span>Support &amp; Escalations</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Reports & Data -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>📊</span>
+                <span>Reports &amp; Data</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'reports' %}">
+                    <span>📑</span>
+                    <span>Reports</span>
+                </a>
+
+                <a href="{% url 'data_export' %}">
+                    <span>📥</span>
+                    <span>Data Export</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Administration -->
+        <div class="nav-section">
+
+            <button type="button"
+                    class="nav-section-title"
+                    onclick="toggleNavSection(this)">
+
+                <span>⚙️</span>
+                <span>Administration</span>
+                <span class="nav-arrow">▸</span>
+
+            </button>
+
+            <div class="nav-submenu">
+
+                <a href="{% url 'fleet_settings' %}">
+                    <span>⚙️</span>
+                    <span>Fleet Settings</span>
+                </a>
+
+                <a href="{% url 'user_management' %}">
+                    <span>👤</span>
+                    <span>User Management</span>
+                </a>
+
+                <a href="{% url 'profile' %}">
+                    <span>🧑</span>
+                    <span>My Profile</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Logout -->
+    <div class="sidebar-bottom">
+
+        <a href="{% url 'logout' %}">
+            <span>🚪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+
+            <div>
+                <h1>Fleet Management Dashboard</h1>
+
+                <p>
+                    Monitor vehicles, trips, maintenance,
+                    fuel, alerts and customer support.
+                </p>
+            </div>
+
+            <div class="user-info">
+
+                <div class="user-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <span>
+                    {{ request.user.username }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             WELCOME SECTION
+        ========================== -->
+        <section class="welcome-section">
+
+            <h2>
+                Welcome back, {{ request.user.username }}!
+            </h2>
+
+            <p>
+                Here is an overview of your fleet and
+                current fleet management activities.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             MAIN STATISTICS
+        ========================== -->
+        <section class="stats-grid">
+
+            <!-- Total Vehicles -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🚗
+                </div>
+
+                <div>
+                    <h3>{{ total_vehicles }}</h3>
+                    <p>Total Vehicles</p>
+                </div>
+
+            </div>
+
+
+            <!-- Active Vehicles -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🟢
+                </div>
+
+                <div>
+                    <h3>{{ active_vehicles }}</h3>
+                    <p>Active Vehicles</p>
+                </div>
+
+            </div>
+
+
+            <!-- Offline Vehicles -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔴
+                </div>
+
+                <div>
+                    <h3>{{ offline_vehicles }}</h3>
+                    <p>Offline Vehicles</p>
+                </div>
+
+            </div>
+
+
+            <!-- Maintenance -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔧
+                </div>
+
+                <div>
+                    <h3>{{ maintenance_vehicles }}</h3>
+                    <p>Vehicles in Maintenance</p>
+                </div>
+
+            </div>
+
+
+            <!-- Active Trips -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🛣️
+                </div>
+
+                <div>
+                    <h3>{{ active_trips }}</h3>
+                    <p>Active Trips</p>
+                </div>
+
+            </div>
+
+
+            <!-- Completed Trips -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+                    <h3>{{ completed_trips }}</h3>
+                    <p>Completed Trips</p>
+                </div>
+
+            </div>
+
+
+            <!-- Unread Alerts -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔔
+                </div>
+
+                <div>
+                    <h3>{{ unread_alerts }}</h3>
+                    <p>Unread Alerts</p>
+                </div>
+
+            </div>
+
+
+            <!-- Total Expenses -->
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <div>
+                    <h3>{{ total_expenses|floatformat:2 }}</h3>
+                    <p>Total Expenses</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FINANCIAL OVERVIEW
+        ========================== -->
+        <div class="dashboard-grid">
+
+            <section class="dashboard-panel">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Fleet Cost Overview</h2>
+
+                        <p>
+                            Current recorded fleet costs.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            ⛽
+                        </div>
+
+                        <div>
+                            <h3>
+                                {{ total_fuel_cost|floatformat:2 }}
+                            </h3>
+
+                            <p>
+                                Total Fuel Cost
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            🔧
+                        </div>
+
+                        <div>
+                            <h3>
+                                {{ total_maintenance_cost|floatformat:2 }}
+                            </h3>
+
+                            <p>
+                                Maintenance Cost
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SYSTEM STATUS -->
+            <section class="dashboard-panel">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>System Status</h2>
+
+                        <p>
+                            Current fleet system status.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+
+                    <p>
+                        <strong>Fleet System</strong>
+                    </p>
+
+                    <p class="status-online">
+                        ● System Online
+                    </p>
+
+                    <p>
+                        Vehicle monitoring and fleet
+                        management services are available.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- =========================
+             RECENT ALERTS + RECENT TRIPS
+        ========================== -->
+        <div class="dashboard-grid">
+
+
+            <!-- RECENT ALERTS -->
+            <section class="dashboard-panel">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Recent Alerts</h2>
+
+                        <p>
+                            Latest vehicle alerts.
+                        </p>
+                    </div>
+
+                    <a href="{% url 'alerts' %}"
+                       class="small-button">
+                        View All
+                    </a>
+
+                </div>
+
+
+                {% if recent_alerts %}
+
+                    <div class="alert-list">
+
+                        {% for alert in recent_alerts %}
+
+                            <div class="alert-item">
+
+                                <div>
+
+                                    <strong>
+                                        {{ alert.vehicle.registration_number }}
+                                    </strong>
+
+                                    <p>
+                                        {{ alert.message }}
+                                    </p>
+
+                                </div>
+
+                                <div>
+
+                                    <small>
+                                        {{ alert.created_at }}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="activity-placeholder">
+
+                        <div class="map-icon">
+                            🔔
+                        </div>
+
+                        <h3>No Recent Alerts</h3>
+
+                        <p>
+                            There are currently no recent
+                            vehicle alerts.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- RECENT TRIPS -->
+            <section class="dashboard-panel">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Recent Trips</h2>
+
+                        <p>
+                            Latest recorded trips.
+                        </p>
+                    </div>
+
+                    <a href="{% url 'trips' %}"
+                       class="small-button">
+                        View All
+                    </a>
+
+                </div>
+
+
+                {% if recent_trips %}
+
+                    <div class="table-responsive">
+
+                        <table class="data-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Vehicle</th>
+                                    <th>Driver</th>
+                                    <th>Status</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for trip in recent_trips %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ trip.vehicle.registration_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ trip.driver.name }}
+                                        </td>
+
+                                        <td>
+                                            {{ trip.get_status_display }}
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="activity-placeholder">
+
+                        <div class="map-icon">
+                            🛣️
+                        </div>
+
+                        <h3>No Recent Trips</h3>
+
+                        <p>
+                            No trips have been recorded recently.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+        </div>
+
+
+        <!-- =================================================
+             CRM ACTIVITY
+             NEW SECTION AT THE BOTTOM
+        ================================================== -->
+        <section class="dashboard-panel">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>CRM Activity</h2>
+
+                    <p>
+                        Recent customer communication and
+                        follow-up activities.
+                    </p>
+                </div>
+
+                <a href="{% url 'crm_activities' %}"
+                   class="small-button">
+                    View CRM
+                </a>
+
+            </div>
+
+
+            {% if recent_crm_activity %}
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Client</th>
+                                <th>Activity</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for activity in recent_crm_activity %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ activity.client_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ activity.get_activity_type_display }}
+                                    </td>
+
+                                    <td>
+                                        {{ activity.get_status_display }}
+                                    </td>
+
+                                    <td>
+                                        {{ activity.activity_date }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="activity-placeholder">
+
+                    <div class="map-icon">
+                        👥
+                    </div>
+
+                    <h3>No CRM Activity</h3>
+
+                    <p>
+                        No customer activities have been
+                        recorded yet.
+                    </p>
+
+                    <br>
+
+                    <a href="{% url 'add_crm_activity' %}"
+                       class="small-button">
+                        Add CRM Activity
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             SUPPORT & ESCALATIONS
+        ================================================== -->
+        <section class="dashboard-panel">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Support & Escalations</h2>
+
+                    <p>
+                        Open customer support issues and
+                        vehicle-related problems.
+                    </p>
+                </div>
+
+                <a href="{% url 'support_tickets' %}"
+                   class="small-button">
+                    View Support
+                </a>
+
+            </div>
+
+
+            {% if open_support_tickets %}
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Issue</th>
+                                <th>Vehicle</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for ticket in open_support_tickets %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ ticket.issue }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if ticket.vehicle %}
+                                            {{ ticket.vehicle.registration_number }}
+                                        {% else %}
+                                            Not assigned
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.get_priority_display }}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.get_status_display }}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.created_at|date:"d M Y" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="activity-placeholder">
+
+                    <div class="map-icon">
+                        🛠️
+                    </div>
+
+                    <h3>No Open Support Issues</h3>
+
+                    <p>
+                        There are currently no unresolved
+                        support tickets or escalations.
+                    </p>
+
+                    <br>
+
+                    <a href="{% url 'add_support_ticket' %}"
+                       class="small-button">
+                        Add Support Ticket
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =========================
+             QUICK ACCESS
+        ========================== -->
+        <section class="section">
+
+            <div class="section-header-row">
+
+                <div>
+
+                    <h2>Quick Access</h2>
+
+                    <p class="section-description">
+                        Quickly access frequently used
+                        fleet management functions.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-links">
+
+                <a href="{% url 'add_vehicle' %}"
+                   class="quick-link">
+                    🚗
+                    <span>Add Vehicle</span>
+                </a>
+
+                <a href="{% url 'add_driver' %}"
+                   class="quick-link">
+                    👨‍✈️
+                    <span>Add Driver</span>
+                </a>
+
+                <a href="{% url 'add_trip' %}"
+                   class="quick-link">
+                    🛣️
+                    <span>Create Trip</span>
+                </a>
+
+                <a href="{% url 'add_fuel' %}"
+                   class="quick-link">
+                    ⛽
+                    <span>Add Fuel Record</span>
+                </a>
+
+                <a href="{% url 'add_maintenance' %}"
+                   class="quick-link">
+                    🔧
+                    <span>Add Maintenance</span>
+                </a>
+
+                <a href="{% url 'add_alert' %}"
+                   class="quick-link">
+                    🔔
+                    <span>Create Alert</span>
+                </a>
+
+                <a href="{% url 'add_crm_activity' %}"
+                   class="quick-link">
+                    👥
+                    <span>CRM Activity</span>
+                </a>
+
+                <a href="{% url 'add_support_ticket' %}"
+                   class="quick-link">
+                    🛠️
+                    <span>Support Ticket</span>
+                </a>
+
+                <a href="{% url 'reports' %}"
+                   class="quick-link">
+                    📑
+                    <span>View Reports</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+<script>
+function toggleNavSection(button) {
+
+    const submenu = button.nextElementSibling;
+    const arrow = button.querySelector('.nav-arrow');
+
+    if (submenu.classList.contains('open')) {
+
+        submenu.classList.remove('open');
+        button.classList.remove('open');
+        arrow.textContent = '▸';
+
+    } else {
+
+        submenu.classList.add('open');
+        button.classList.add('open');
+        arrow.textContent = '▾';
+
+    }
+}
+</script>
+
+</body>
+</html>

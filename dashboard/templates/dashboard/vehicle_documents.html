@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Vehicle Documents</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Vehicle Documents</h1>
+
+                <p>
+                    View vehicle document records.
+                </p>
+            </div>
+
+            <a href="{% url 'add_vehicle_document' %}"
+               class="add-vehicle-button">
+                + Add Document
+            </a>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Document Type</th>
+                        <th>Document Number</th>
+                        <th>Issue Date</th>
+                        <th>Expiry Date</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for document in documents %}
+
+                    <tr>
+
+                        <td>
+                            {{ document.vehicle.registration_number }}
+                        </td>
+
+                        <td>
+                            {{ document.get_document_type_display }}
+                        </td>
+
+                        <td>
+                            {{ document.document_number|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ document.issue_date|date:"d M Y"|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ document.expiry_date|date:"d M Y"|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ document.notes|default:"-" }}
+                        </td>
+
+                        <td class="driver-actions">
+
+    <a href="{% url 'delete_vehicle_document' document.id %}"
+       class="delete-button">
+        Delete
+    </a>
+
+</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="7"
+                            style="text-align:center; padding:30px;">
+                            No vehicle documents found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

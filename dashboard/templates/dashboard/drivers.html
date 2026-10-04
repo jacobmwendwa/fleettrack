@@ -1,0 +1,213 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Drivers - Fleet Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <h2>Fleet Dashboard</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'dashboard' %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'vehicles' %}">
+                Vehicles
+            </a>
+
+            <a href="{% url 'drivers' %}"
+               class="active">
+                Drivers
+            </a>
+
+            <a href="{% url 'live_tracking' %}">
+                Live Tracking
+            </a>
+
+            <a href="{% url 'fleet_analytics' %}">
+                Fleet Analytics
+            </a>
+
+            <a href="{% url 'maintenance_records' %}">
+                Maintenance
+            </a>
+
+            <a href="{% url 'fuel_records' %}">
+                Fuel
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <div class="dashboard-content">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>Drivers</h1>
+
+                    <p>
+                        Manage drivers and their assigned vehicles.
+                    </p>
+
+                </div>
+
+                <a href="{% url 'add_driver' %}"
+                   class="add-vehicle-button">
+                    + Add Driver
+                </a>
+
+            </div>
+
+            <div class="search-filter-container">
+
+    <form method="get" class="search-filter-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search name, phone, licence or vehicle"
+            class="search-input"
+        >
+
+        <button
+            type="submit"
+            class="edit-button">
+            Search
+        </button>
+
+        <a
+            href="{% url 'drivers' %}"
+            class="delete-button">
+            Clear
+        </a>
+
+    </form>
+
+</div>
+
+
+            <div class="dashboard-card">
+
+                <div class="table-responsive">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>License Number</th>
+                                <th>Assigned Vehicle</th>
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for driver in drivers %}
+
+                            <tr>
+
+                                <td>
+                                    {{ driver.name }}
+                                </td>
+
+                                <td>
+                                    {{ driver.phone|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ driver.license_number|default:"-" }}
+                                </td>
+
+                                <td>
+
+                                    {% if driver.vehicle %}
+                                        {{ driver.vehicle.registration_number }}
+                                    {% else %}
+                                        Not Assigned
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="driver-actions">
+
+    <a href="{% url 'edit_driver' driver.id %}"
+       class="edit-button">
+        Edit
+    </a>
+
+    <a href="{% url 'delete_driver' driver.id %}"
+       class="delete-button">
+        Delete
+    </a>
+
+</td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="4"
+                                    style="text-align:center; padding:30px;">
+
+                                    No drivers found.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

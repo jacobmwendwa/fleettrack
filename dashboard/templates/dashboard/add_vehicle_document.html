@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Add Vehicle Document</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Add Vehicle Document</h1>
+
+                <p>
+                    Add a document record for a vehicle.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="form-container">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="add-vehicle-button">
+                    Save Document
+                </button>
+
+                <a
+                    href="{% url 'vehicle_documents' %}"
+                    class="edit-button">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

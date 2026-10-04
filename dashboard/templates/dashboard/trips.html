@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Trips</title>
+
+    {% load static %}
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-content">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Trips</h1>
+
+                <p>
+                    View vehicle trip records.
+                </p>
+
+            </div>
+
+            <a href="{% url 'add_trip' %}"
+               class="add-vehicle-button">
+                + Add Trip
+            </a>
+
+        </div>
+
+        <div class="search-filter-container">
+
+    <form method="get" class="search-filter-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search vehicle, driver, location or destination"
+            class="search-input"
+        >
+
+        <select name="status" class="search-select">
+
+            <option value="">All Statuses</option>
+
+            <option value="planned"
+                {% if selected_status == 'planned' %}selected{% endif %}>
+                Planned
+            </option>
+
+            <option value="in_progress"
+                {% if selected_status == 'in_progress' %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="completed"
+                {% if selected_status == 'completed' %}selected{% endif %}>
+                Completed
+            </option>
+
+            <option value="cancelled"
+                {% if selected_status == 'cancelled' %}selected{% endif %}>
+                Cancelled
+            </option>
+
+        </select>
+
+        <button
+            type="submit"
+            class="edit-button">
+            Search
+        </button>
+
+        <a
+            href="{% url 'trips' %}"
+            class="delete-button">
+            Clear
+        </a>
+
+    </form>
+
+</div>
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                        <th>Start Location</th>
+                        <th>Destination</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Distance (km)</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for trip in trips %}
+
+                    <tr>
+
+                        <td>
+                            {{ trip.vehicle.registration_number }}
+                        </td>
+
+                        <td>
+                            {{ trip.driver.name|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ trip.start_location }}
+                        </td>
+
+                        <td>
+                            {{ trip.destination }}
+                        </td>
+
+                        <td>
+                            {{ trip.start_time|date:"d M Y H:i" }}
+                        </td>
+
+                        <td>
+                            {{ trip.end_time|date:"d M Y H:i"|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ trip.distance|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ trip.get_status_display }}
+                        </td>
+
+                        <td>
+                            {{ trip.notes|default:"-" }}
+                        </td>
+
+                        <td class="driver-actions">
+
+    <a
+        href="{% url 'edit_trip' trip.id %}"
+        class="edit-button">
+        Edit
+    </a>
+
+    <a
+        href="{% url 'delete_trip' trip.id %}"
+        class="delete-button">
+        Delete
+    </a>
+
+</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="10"
+                            style="text-align:center; padding:30px;">
+
+                            No trips found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
